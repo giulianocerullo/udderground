@@ -231,7 +231,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 .tut-dots{display:flex;justify-content:center;gap:6px}
 .tut-dots i{width:8px;height:8px;border-radius:99px;background:var(--line);transition:width .2s}
 .tut-dots i.on{width:22px;background:var(--ink)}
-.tut-arrow{position:absolute;right:max(22px,env(safe-area-inset-right,0px));bottom:calc(6px + env(safe-area-inset-bottom,0px));width:26px;animation:bob 1s ease-in-out infinite alternate}
+.tut-arrow{position:absolute;left:calc(28% - 13px);bottom:calc(6px + env(safe-area-inset-bottom,0px));width:26px;animation:bob 1s ease-in-out infinite alternate}
 .tut-arrow[hidden]{display:none}
 @keyframes bob{to{transform:translateY(8px)}}
 .tut.s2{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}
@@ -307,6 +307,19 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .fly{position:fixed;z-index:50;width:30px;height:30px;pointer-events:none;margin:-15px 0 0 -15px}
 @keyframes popin{0%{transform:scale(.3)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
+
+.notif[hidden]{display:none}
+.swipehint span{display:inline-flex;align-items:center;gap:4px}
+.swipehint i,.fbsum i,.log i{display:inline-block;width:16px;height:16px;vertical-align:-3px}
+.swipehint i svg,.fbsum i svg,.log i svg{width:100%;height:100%;display:block}
+.fbsum{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.fbsum span{display:inline-flex;align-items:center;gap:5px}
+#bookAll{align-self:stretch}
+.bookpage{position:absolute;inset:0;z-index:6;background:var(--milk);overflow-y:auto;padding:14px max(18px,env(safe-area-inset-right,0px)) 28px max(18px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:16px;animation:slidein .25s ease-out}
+.bookpage[hidden]{display:none}
+@keyframes slidein{from{transform:translateX(30px);opacity:0}}
+.bp-head{display:flex;align-items:center;gap:12px}
+.bp-head h2{font-size:26px;margin-right:auto}
 
 /* scene: levels */
 .lvl2,.lvl3,.lvl4{display:none}
@@ -436,7 +449,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
       <!-- TODAY -->
       <section class="screen" id="today" role="tabpanel" aria-labelledby="tabToday">
         <div class="dayhead"><h2 id="dateLabel">Friday, Oct 30</h2><div class="daystk" id="dayChip"></div></div>
-        <div class="notif">
+        <div class="notif" id="notif">
           <div class="ico"><svg viewBox="0 0 40 40" aria-hidden="true" width="100%" height="100%"><g transform="translate(20,21) scale(0.86) translate(-20,-21)">
 <ellipse cx="8" cy="14" rx="7" ry="3.5" transform="rotate(-25 8 14)" fill="#FFFFFF" stroke="#1F1A17" stroke-width="2.6"/>
 <ellipse cx="32" cy="14" rx="7" ry="3.5" transform="rotate(25 32 14)" fill="#FFFFFF" stroke="#1F1A17" stroke-width="2.6"/>
@@ -447,7 +460,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 <circle cx="16.5" cy="27.5" r="1.5" fill="#1F1A17"/><circle cx="23.5" cy="27.5" r="1.5" fill="#1F1A17"/>
 </g></svg></div>
           <div class="nt"><b>Morning milking!</b><span>Your fresh track is ready.</span></div>
-          <span class="ntime">7:30</span>
+          <span class="ntime" id="ntime">07:30</span>
         </div>
         <div class="banner" id="missedBanner" hidden>She missed you. No worries, the pasture is still here.</div>
         <div class="card chewing" id="loadCard" hidden>
@@ -472,7 +485,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
               <div class="fbmark" id="fbMark" hidden></div>
             </div>
           </div>
-          <div class="swipehint" id="swipeHint" aria-hidden="true"><span>← Not for me</span><span>↓ Knew it</span><span>Love it →</span></div>
+          <div class="swipehint" id="swipeHint" aria-hidden="true"><span>← <i data-ic="nope"></i> Not for me</span><span>↓ <i data-ic="knew"></i> Knew it</span><span>Love it <i data-ic="love"></i> →</span></div>
           <div class="info">
             <div class="badges" id="why"></div>
             <h3 id="sTitle">Paper Lanterns</h3>
@@ -592,7 +605,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
                 <path d="M30,520 L34,470" fill="none" stroke="#C98B55" stroke-width="5"/>
                 <g transform="rotate(-10 40 460)">
                   <rect x="2" y="446" width="80" height="28" fill="#FFD966" stroke-width="3"/>
-                  <text x="42" y="466" text-anchor="middle" font-family="Gaegu, 'Patrick Hand', cursive" font-weight="700" font-size="16" fill="#1F1A17" stroke="none">MOOSH PIT</text>
+                  <text x="42" y="466" text-anchor="middle" font-family="Figtree, sans-serif" font-weight="900" font-size="13" fill="#1F1A17" stroke="none">MOOSH PIT</text>
                 </g>
               </g>
               <!-- turntable (lv4) -->
@@ -719,7 +732,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
               <!-- speech bubble -->
               <g id="bubble" transform="translate(270,330)">
                 <path d="M-6,0 C-8,-28 10,-40 44,-40 C80,-40 96,-28 94,-8 C92,10 74,14 46,13 C34,13 26,13 18,12 L2,26 L6,10 C-2,8 -5,5 -6,0 Z" fill="#FFFFFF" stroke-width="3.5"/>
-                <text id="bubbleText" x="44" y="-6" text-anchor="middle" font-family="Gaegu, 'Patrick Hand', cursive" font-weight="700" font-size="26" fill="#1F1A17" stroke="none">♪</text>
+                <text id="bubbleText" x="44" y="-6" text-anchor="middle" font-family="Figtree, sans-serif" font-weight="900" font-size="21" fill="#1F1A17" stroke="none">♪</text>
               </g>
             </g>
           </svg>
@@ -744,9 +757,16 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
         </div>
         <div class="sechead"><h2>Sticker book</h2><span class="eyebrow" id="bookCount">0 collected</span></div>
         <div class="book" id="book"></div>
+        <button class="btn ghost" id="bookAll" type="button">See all stickers</button>
         <div class="sechead"><h2>Track log</h2></div>
         <div class="fbsum" id="fbsum"></div>
         <ul class="card log" id="log"></ul>
+      </section>
+
+      <!-- STICKER BOOK (full page) -->
+      <section class="bookpage" id="bookPage" hidden aria-labelledby="bookTitle">
+        <div class="bp-head"><button class="iconbtn" id="bookBack" type="button" aria-label="Back to stats"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15,5 L8,12 L15,19" fill="none" stroke="#17140F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2 id="bookTitle">Sticker book</h2><span class="eyebrow" id="bookCount2"></span></div>
+        <div class="book full" id="bookFull"></div>
       </section>
     </main>
 
@@ -790,14 +810,14 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 <circle cx="16.5" cy="27.5" r="1.5" fill="#1F1A17"/><circle cx="23.5" cy="27.5" r="1.5" fill="#1F1A17"/>
 </g></svg></div><span class="tut-moo">Moo!</span></div>
         <h2 id="tutTitle">Welcome to the pasture.</h2>
-        <p>Every morning at 7:30 a cow picks one song you've never heard. Listen, and she grows.</p>
+        <p>Every morning at <span class="t730">07:30</span> a cow picks one song you've never heard. Listen, and she grows.</p>
         <button class="btn" id="tutNext" type="button">Put her on my Home Screen</button>
         <button class="textbtn" id="tutSkip" type="button">Maybe later</button>
       </div>
       <div class="tut-step" id="tut2" hidden>
         <h2>Add to Home Screen</h2>
         <ol class="tut-list">
-          <li><span class="ios"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#F1F1F3"/><circle cx="9.5" cy="16" r="2" fill="#1C1C1E"/><circle cx="16" cy="16" r="2" fill="#1C1C1E"/><circle cx="22.5" cy="16" r="2" fill="#1C1C1E"/></svg></span><span>Tap <b>•••</b> next to the address bar</span></li>
+          <li><span class="ios"><svg viewBox="0 0 32 32"><path d="M8,10.5 H24 M8,16 H24 M8,21.5 H19" stroke="#1C1C1E" stroke-width="2.4" stroke-linecap="round"/></svg></span><span>Tap the <b>menu button</b> on the left of the address bar</span></li>
           <li><span class="ios"><svg viewBox="0 0 32 32"><path d="M11,12 H9.5 a2.5,2.5 0 0 0 -2.5,2.5 V25 a2.5,2.5 0 0 0 2.5,2.5 h13 a2.5,2.5 0 0 0 2.5,-2.5 V14.5 a2.5,2.5 0 0 0 -2.5,-2.5 H21" fill="none" stroke="#0A84FF" stroke-width="2" stroke-linecap="round"/><path d="M16,19 V4.5 M11.5,9 L16,4.5 L20.5,9" fill="none" stroke="#0A84FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Tap <b>Share</b></span></li>
           <li><span class="ios"><svg viewBox="0 0 32 32"><rect x="5" y="5" width="22" height="22" rx="6" fill="none" stroke="#1C1C1E" stroke-width="2"/><path d="M16,10.5 V21.5 M10.5,16 H21.5" stroke="#1C1C1E" stroke-width="2" stroke-linecap="round"/></svg></span><span>Scroll down and tap <b>Add to Home Screen</b></span></li>
           <li><span class="ios"><svg viewBox="0 0 32 32"><rect x="2" y="8" width="28" height="16" rx="8" fill="#34C759"/><circle cx="22" cy="16" r="6.5" fill="#fff"/></svg></span><span>Keep <b>Open as Web App</b> on, then tap <b>Add</b></span></li>
@@ -838,7 +858,27 @@ const ITEM_ORDER=['lanterns','drum','campfire','boombox','fireflies','saxophone'
 const GENRE_ITEM=[[/r&b|lo-?fi/i,'cassette'],[/pop/i,'lanterns'],[/afro|african|reggae|dancehall/i,'drum'],[/folk|singer/i,'campfire'],[/rap|hip|synth/i,'boombox'],
   [/electro|dance|ambient|house|techno/i,'fireflies'],[/jazz|blues|soul|funk/i,'saxophone'],[/rock|metal|punk|alternative|indie/i,'sign'],
   [/latin|brazil|cumbia|reggaeton/i,'maracas'],[/country|bluegrass/i,'banjo']];
-const ITEM_EMOJI={lanterns:'🏮',drum:'🥁',campfire:'🔥',boombox:'📻',fireflies:'✨',saxophone:'🎷',sign:'🪧',maracas:'🎶',cassette:'📼',banjo:'🪕'};
+/* pasture item art is reused on genre stickers: viewBox of each item in scene coordinates */
+const ITEM_VB={lanterns:'226 32 166 72',drum:'16 520 60 70',campfire:'300 498 72 80',boombox:'76 540 78 60',fireflies:'128 196 124 108',saxophone:'70 300 82 116',sign:'-6 428 96 98',maracas:'162 548 74 54',cassette:'226 552 68 46',banjo:'332 302 64 126'};
+function itemArt(k,x,y,w,h){
+  const el=document.getElementById('item-'+k);if(!el)return '';
+  const c=el.cloneNode(true);['id','hidden','class','tabindex','role','aria-label','data-key'].forEach(a=>c.removeAttribute(a));
+  let html=c.outerHTML;
+  if(k==='fireflies')html=html.replace(/class="firefly"/g,'').replace(/opacity="\.35"/g,'opacity=".9"').replace(/<circle /g,'<circle stroke="#1F1A17" stroke-width="2.5" ');
+  return `<svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="${ITEM_VB[k]}" preserveAspectRatio="xMidYMid meet"><g stroke="#1F1A17" stroke-linejoin="round" stroke-linecap="round" stroke-width="3">${html}</g></svg>`;
+}
+/* feedback icons (no emoji anywhere) */
+const ICONS={
+  love:'<svg viewBox="0 0 24 24"><path d="M12,20.6 C5.2,15.8 2.6,12.4 2.6,8.7 A4.9,4.9 0 0 1 12,6.6 A4.9,4.9 0 0 1 21.4,8.7 C21.4,12.4 18.8,15.8 12,20.6Z" fill="#FF8FAB" stroke="#17140F" stroke-width="2.2" stroke-linejoin="round"/><path d="M6.8,8.6 a2.4,2.4 0 0 1 2.2,-1.9" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  nope:'<svg viewBox="0 0 24 24"><rect x="2.8" y="2.8" width="18.4" height="18.4" rx="6" fill="#FFFFFF" stroke="#17140F" stroke-width="2.2"/><path d="M8.4,8.4 L15.6,15.6 M15.6,8.4 L8.4,15.6" stroke="#17140F" stroke-width="2.8" stroke-linecap="round"/></svg>',
+  knew:'<svg viewBox="0 0 24 24"><circle cx="11" cy="12" r="9" fill="#17140F"/><circle cx="11" cy="12" r="6.4" fill="none" stroke="#5E584E" stroke-width=".9"/><circle cx="11" cy="12" r="3.2" fill="#FFD54A" stroke="#17140F" stroke-width="1"/><circle cx="11" cy="12" r=".9" fill="#17140F"/><circle cx="18.6" cy="17.6" r="4.6" fill="#6FCB7F" stroke="#17140F" stroke-width="1.8"/><path d="M16.5,17.7 L18.1,19.2 L20.7,16.2" fill="none" stroke="#17140F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+const icon=k=>`<i aria-hidden="true">${ICONS[k]}</i>`;
+/* the 7:30 milking, written the way this device writes times */
+const H12=(()=>{try{const o=new Intl.DateTimeFormat(undefined,{hour:'numeric'}).resolvedOptions();return o.hourCycle?/h1[12]/.test(o.hourCycle):!!o.hour12;}catch(e){return false;}})();
+const T730=H12?'7:30 AM':'07:30';
+document.querySelectorAll('#ntime,.t730').forEach(e=>e.textContent=T730);
+document.querySelectorAll('[data-ic]').forEach(e=>{e.innerHTML=ICONS[e.dataset.ic];});
 const EXAMPLES=[{title:"Velvet Static",artist:"Juno Park"},{title:"Orchard Lights",artist:"The Hollow Pines"},{title:"Midnight Laundromat",artist:"Cass Ortega"},{title:"Glass Garden",artist:"Lumen Kids"},{title:"Slow Bicycle",artist:"Ana Rivo"}];
 const LEVELS=[{n:1,name:"Calf",min:0},{n:2,name:"Heifer",min:3},{n:3,name:"Cow",min:6},{n:4,name:"Moosician",min:10}];
 const SCALE=[.6,.78,.9,1];
@@ -958,11 +998,11 @@ function daySVG(n){
   const inner=stx(100,74,26,'DAY',false,true)+stx(100,146,n>99?62:80,String(n),false);
   return stickerSVG('circle','#FFD54A',inner,200,200);
 }
-const FBS={love:['#FF8FAB','❤️','LOVED'],nope:['#FFFFFF','👎','NOPE'],knew:['#FFD54A','🙈','KNEW IT']};
-function fbSVG(v){const [c,e,t]=FBS[v];return stickerSVG('circle',c,`<text x="100" y="112" text-anchor="middle" font-size="70">${e}</text>`+stx(100,160,24,t,false,true),200,200);}
+const FBS={love:['#FFFFFF','LOVED'],nope:['#FFFFFF','NOPE'],knew:['#FFFFFF','KNEW IT']};
+function fbSVG(v){const [c,t]=FBS[v];return stickerSVG('circle',c,`<svg x="48" y="30" width="104" height="104" viewBox="0 0 24 24">${ICONS[v].replace(/^<svg[^>]*>|<\/svg>$/g,'')}</svg>`+stx(100,166,26,t,false,true),200,200);}
 function hypeSVG(s){
   const sub=(s.genre||'').toUpperCase().slice(0,18);
-  const inner=ringText(100,100,84,'TODAY’S MOO · FRESH TRACK · DAILY 7:30 · NEW TO YOU · ',12.5)
+  const inner=ringText(100,100,84,`TODAY’S MOO · FRESH TRACK · DAILY ${T730} · NEW TO YOU · `,12.5)
     +`<circle cx="100" cy="100" r="71" fill="none" stroke="${INK}" stroke-width="1.6"/>`
     +stx(100,62,11,'INCLUDES',false,true)
     +titleBlock(fitLines('“'+s.title.toUpperCase()+'”',11,2),100,102,118,26)
@@ -1117,7 +1157,7 @@ async function genreOf(t){try{const a=await dz(`/album/${t.album.id}`);const g=a
 function mkSug(t,extra){return Object.assign({id:t.id,title:t.title_short||t.title,artist:t.artist.name,artistId:t.artist.id,
   link:t.link||`https://www.deezer.com/track/${t.id}`,cover:(t.album&&(t.album.cover_big||t.album.cover_medium))||'',preview:t.preview||'',bpm:t.bpm||0,color:PAL[t.id%6]},extra);}
 
-// 🌱 Hidden gem: walk "related artists" out from one of your artists (or one you loved), keep the ones with few fans.
+// Hidden gem: walk "related artists" out from one of your artists (or one you loved), keep the ones with few fans.
 // Every "Already knew it" raises depth: a lower fan ceiling and more hops away from your picks.
 async function hiddenGem(P,n){
   const T=S.taste;const known=new Set([...P.artists.map(a=>a.id),...T.blockedArtists,...T.usedArtists]);
@@ -1144,7 +1184,7 @@ async function hiddenGem(P,n){
   }
   return null;
 }
-// 🔀 Same vibe, new world: a big name from a genre you don't listen to, with the tempo closest to your picks.
+// Same vibe, new world: a big name from a genre you don't listen to, with the tempo closest to your picks.
 const SKIP_GENRES=[0,95];
 function vibeWords(t,P){const w=[];if(t.bpm>0)w.push(`${Math.round(t.bpm)} BPM`);const b=t.bpm||P.bpm;
   if(b)w.push(b<85?'slow':b<105?'laid-back':b<125?'groovy':b<140?'upbeat':'high-energy');
@@ -1194,6 +1234,7 @@ function setTab(t){
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t?'true':'false'));
   ['today','pasture','stats'].forEach(id=>{$('#'+id).hidden=id!==t;});
   if(t==='pasture'){$('#tabDot').hidden=true;renderPasture();}
+  $('#bookPage').hidden=true;
   if(t==='stats'){$('#statsDot').hidden=true;renderStats();}
   hideTip();
 }
@@ -1232,8 +1273,10 @@ function showTrack(d){
   $('#whyLine').innerHTML=s.type==='hidden_gem'?esc(s.reason)+'.':`Matches your taste in <b>${esc(s.vibe)}</b>. ${esc(s.reason)}.`;
   if(s.seed)$('#chewed').textContent=`Chewed from ${s.seed}.`;
   else{const pick=S.songs[hash(s.id)%Math.max(1,S.songs.length)]||{title:'your picks',artist:''};$('#chewed').textContent=`Chewed from your pick “${pick.title}”${pick.artist?' by '+pick.artist:''}.`;}
-  $('#links').innerHTML=s.link?`<a href="${esc(s.link)}" target="_blank" rel="noopener">Deezer ↗</a><a href="https://open.spotify.com/search/${encodeURIComponent(s.title+' '+s.artist)}" target="_blank" rel="noopener">Spotify ↗</a>`:'';
-  $('#links').hidden=!s.link;
+  const real=typeof s.id==='number',q=encodeURIComponent(s.title+' '+s.artist);
+  $('#links').innerHTML=real?`<a href="https://music.apple.com/search?term=${q}" target="_blank" rel="noopener">Apple Music ↗</a><a href="https://open.spotify.com/search/${q}" target="_blank" rel="noopener">Spotify ↗</a>`:'';
+  $('#links').hidden=!real;
+  $('#notif').hidden=!!d.listened;
   if(d.listened&&!playing)prog=1;else if(!playing&&curId!==s.id)prog=0;
   curId=s.id;
   drawPlayer();renderFeedback();
@@ -1300,10 +1343,10 @@ function complete(){
   d.listened=true;S.listenedDays++;S.milk++;
   S.streak=(S.lastListenedKey===shiftKey(k,-1))?S.streak+1:1;
   S.lastListenedKey=k;S.best=Math.max(S.best||0,S.streak);S.newSticker='t'+k;
-  const item=discover(d.sug);
+  const item=discover(d.sug);stampUnlocks();
   save();flyDrop();peelSticker();showTrack(d);renderHeader();
   const after=levelOf(S.listenedDays);
-  toast('+1 milk 🥛 Udderly fresh! Sticker saved.');
+  toast('+1 milk. Udderly fresh! Sticker saved.');
   if(after.n>before.n)toast(`Your cow grew! She's now a ${after.name}.`);
   if(item)toast(`New in your pasture: ${ITEM_NAMES[item].toLowerCase()} (${d.sug.genre}).`);
 }
@@ -1482,7 +1525,7 @@ function trackSticker(s){
   return stickerSVG('burst','#94D3F2',inner,200,200);
 }
 function streakSticker(n){
-  const inner=ringText(100,100,82,'★ DAY STREAK ★ KEEP GRAZING ★ DAY STREAK ★ KEEP GRAZING ',11)+stx(100,124,70,String(n),true)+stx(100,146,10.5,'DAYS IN A ROW',false,true);
+  const inner=ringText(100,100,82,'DAY STREAK · KEEP GRAZING · DAY STREAK · KEEP GRAZING · ',11)+stx(100,124,70,String(n),true)+stx(100,146,10.5,'DAYS IN A ROW',false,true);
   return stickerSVG('circle','#FF8FAB',inner,200,200);
 }
 function levelSticker(l){
@@ -1490,24 +1533,34 @@ function levelSticker(l){
   return stickerSVG('rect','#FBFAF6',inner,230,112);
 }
 function genreSticker(d,fill){
-  const inner=ringText(100,100,80,`NEW GENRE · ${d.genre.toUpperCase()} · NEW GENRE · ${d.genre.toUpperCase()} · `,11)+`<text x="100" y="122" text-anchor="middle" font-size="58">${ITEM_EMOJI[d.key]||'🎵'}</text>`;
+  const inner=ringText(100,100,80,`NEW GENRE · ${d.genre.toUpperCase()} · NEW GENRE · ${d.genre.toUpperCase()} · `,11)+itemArt(d.key,52,52,96,96);
   return stickerSVG('circle',fill,inner,200,200);
 }
-function renderBook(){
+function bookItems(){
   const items=[];const best=Math.max(S.best||0,S.streak||0);
-  STREAKS.filter(n=>best>=n).forEach(n=>items.push({k:'s'+n,svg:streakSticker(n)}));
-  LEVELS.filter(l=>l.n>1&&S.listenedDays>=l.min).forEach(l=>items.push({k:'l'+l.n,svg:levelSticker(l)}));
-  S.discovered.forEach((d,i)=>items.push({k:'g'+d.key,svg:genreSticker(d,['#FBFAF6','#FFD54A','#6FCB7F','#94D3F2'][i%4])}));
-  Object.keys(S.days).sort().reverse().filter(k=>S.days[k].listened).forEach(k=>items.push({k:'t'+k,svg:trackSticker(S.days[k].sug)}));
-  const empties=[];const ns=STREAKS.find(n=>best<n);if(ns)empties.push(`${ns}-day<br>streak`);
-  const nl=LEVELS.find(l=>S.listenedDays<l.min);if(nl)empties.push(`Lv ${nl.n}<br>${nl.name}`);
-  empties.push('New<br>genre');
-  $('#bookCount').textContent=`${items.length} collected`;
-  const rot=k=>((hash(k)%15)-7);
-  $('#book').innerHTML=items.map(it=>`<div class="stk${it.k===S.newSticker&&tab==='stats'?' new':''}" style="transform:rotate(${rot(it.k)}deg)">${it.svg}</div>`).join('')
-    +empties.map(e=>`<div class="slot-empty">${e}</div>`).join('');
+  STREAKS.filter(n=>best>=n).forEach(n=>items.push({k:'s'+n,svg:()=>streakSticker(n)}));
+  LEVELS.filter(l=>l.n>1&&S.listenedDays>=l.min).forEach(l=>items.push({k:'l'+l.n,svg:()=>levelSticker(l)}));
+  S.discovered.forEach((d,i)=>items.push({k:'g'+d.key,svg:()=>genreSticker(d,['#FBFAF6','#FFD54A','#6FCB7F','#94D3F2'][i%4])}));
+  Object.keys(S.days).sort().reverse().filter(k=>S.days[k].listened).forEach(k=>items.push({k:'t'+k,svg:()=>trackSticker(S.days[k].sug)}));
+  const unl=S.unl||{};
+  return items.map((it,i)=>Object.assign(it,{at:unl[it.k]||0,i})).sort((a,b)=>(b.at-a.at)||(a.i-b.i));
+}
+function stampUnlocks(){S.unl=S.unl||{};const now=Date.now();bookItems().forEach(it=>{if(!S.unl[it.k])S.unl[it.k]=now;});}
+function bookEmpties(){
+  const best=Math.max(S.best||0,S.streak||0),e=[];const ns=STREAKS.find(n=>best<n);if(ns)e.push(`${ns}-day<br>streak`);
+  const nl=LEVELS.find(l=>S.listenedDays<l.min);if(nl)e.push(`Lv ${nl.n}<br>${nl.name}`);e.push('New<br>genre');return e;
+}
+const stkHTML=it=>`<div class="stk${it.k===S.newSticker&&tab==='stats'?' new':''}" style="transform:rotate(${(hash(it.k)%15)-7}deg)">${it.svg()}</div>`;
+function renderBook(){
+  const items=bookItems(),emp=bookEmpties(),prev=items.slice(0,6);
+  const cnt=`${items.length} collected`;$('#bookCount').textContent=cnt;$('#bookCount2').textContent=cnt;
+  $('#book').innerHTML=prev.map(stkHTML).join('')+emp.slice(0,Math.max(0,6-prev.length)).map(e=>`<div class="slot-empty">${e}</div>`).join('');
+  $('#bookAll').hidden=items.length<=6;$('#bookAll').textContent=`See all ${items.length} stickers`;
+  if(!$('#bookPage').hidden)$('#bookFull').innerHTML=items.map(stkHTML).join('')+emp.map(e=>`<div class="slot-empty">${e}</div>`).join('');
   if(S.newSticker&&tab==='stats'){S.newSticker=null;save();}
 }
+$('#bookAll').addEventListener('click',()=>{$('#bookPage').hidden=false;renderBook();$('#bookPage').scrollTop=0;$('#bookBack').focus({preventScroll:true});});
+$('#bookBack').addEventListener('click',()=>{$('#bookPage').hidden=true;$('#bookAll').focus({preventScroll:true});});
 
 /* ---------- stats ---------- */
 function renderStats(){
@@ -1519,15 +1572,15 @@ function renderStats(){
   else{$('#stNext').textContent='Top level reached';$('#stBar').style.width='100%';}
   $('#ladder').innerHTML=LEVELS.map(l=>`<li class="${l.n===lv.n?'now':l.n<lv.n?'got':''}"><b>${l.name}</b>${l.min}+ days</li>`).join('');
   renderBook();
-  const FBE={love:'❤️',nope:'👎',knew:'🙈'};const tk=todayKey();
+  const tk=todayKey();
   const keys=Object.keys(S.days).sort().reverse();
   $('#log').innerHTML=keys.length?keys.map(k=>{const d=S.days[k],s=d.sug;
     const chip=d.listened?'<span class="stat-chip ok">Listened ✓</span>':k===tk?'<span class="stat-chip today">Today</span>':'<span class="stat-chip miss">Missed</span>';
     const lab=keyDate(k).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    return `<li><span class="dnum">${esc(lab)}</span><span class="dt"><b>${esc(s.title)}${d.fb?' '+FBE[d.fb]:''}</b><span>${esc(s.artist)} · ${esc(s.genre)}</span></span>${chip}</li>`;}).join('')
+    return `<li><span class="dnum">${esc(lab)}</span><span class="dt"><b>${esc(s.title)}${d.fb?' '+icon(d.fb):''}</b><span>${esc(s.artist)} · ${esc(s.genre)}</span></span>${chip}</li>`;}).join('')
     :`<li class="empty-note">Your daily tracks will show up here.</li>`;
   const all=Object.values(S.days);const c=k=>all.filter(e=>e.fb===k).length;
-  $('#fbsum').textContent=`❤️ ${c('love')} loved · 👎 ${c('nope')} not for me · 🙈 ${c('knew')} already known`;
+  $('#fbsum').innerHTML=`<span>${icon('love')} ${c('love')} loved</span><span>${icon('nope')} ${c('nope')} not for me</span><span>${icon('knew')} ${c('knew')} already known</span>`;
 }
 
 /* ---------- menu ---------- */
@@ -1539,7 +1592,7 @@ document.addEventListener('click',()=>{if(!menu.hidden)closeMenu();});
 $('#editBtn').addEventListener('click',()=>{closeMenu();resetPlayer();S.onboarded=false;save();showView();});
 $('#skipBtn').addEventListener('click',()=>{
   closeMenu();S.offsetDays++;save();rollover();
-  toast(missedState()?"She missed you. No worries, the pasture is still here.":"🥛 Morning milking! Your fresh track is ready.");
+  toast(missedState()?"She missed you. No worries, the pasture is still here.":"Morning milking! Your fresh track is ready.");
 });
 resetBtn.addEventListener('click',()=>{
   if(!armed){armed=true;resetBtn.textContent='Tap again to reset';return;}
