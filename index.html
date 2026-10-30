@@ -333,6 +333,59 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 .tut.gate #tutSkip,.tut.gate #tutDone{display:none}
 .gate-end{font-weight:700;color:var(--ink)!important}
 
+/* settings */
+.settings{padding:4px 16px}
+.set-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1.5px solid var(--line)}
+.set-row:last-child{border-bottom:0}
+.set-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;line-height:1.3}
+.set-txt b{font-size:16px;font-weight:800}
+.set-txt>span{font-size:13px;color:var(--ink2);font-weight:500}
+.set-val{font:800 16px var(--body);font-variant-numeric:tabular-nums}
+.switch{width:54px;height:32px;flex:none;border:2.5px solid var(--ink);border-radius:99px;background:var(--line);position:relative;cursor:pointer;padding:0;transition:background .15s}
+.switch i{position:absolute;top:2px;left:2px;width:23px;height:23px;border-radius:50%;background:var(--white);border:2px solid var(--ink);transition:transform .18s cubic-bezier(.3,1.4,.5,1)}
+.switch[aria-checked="true"]{background:var(--pink)}
+.switch[aria-checked="true"] i{transform:translateX(22px)}
+.switch.blocked{opacity:.45}
+/* notification welcome */
+#nw .tut-card{gap:14px}
+#nw h2{font-size:30px}
+#nw p{margin:0;font-size:16px;line-height:1.45;color:var(--ink2)}
+.nw-preview{display:flex;gap:11px;align-items:center;background:rgba(255,255,255,.92);border-radius:22px;padding:11px 13px;box-shadow:0 0 0 1px rgba(0,0,0,.06),0 8px 24px rgba(23,20,15,.14);transform:rotate(-2deg);margin:4px 0 6px;animation:drop .6s cubic-bezier(.3,1.5,.5,1) .15s both}
+@keyframes drop{from{transform:translateY(-30px) rotate(-2deg);opacity:0}}
+.nw-ic{width:40px;height:40px;flex:none;border-radius:10px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.1);display:grid;place-items:center}
+.nw-ic svg{width:34px;height:34px}
+.nw-tx{flex:1;min-width:0;display:flex;flex-direction:column;font:500 14px/1.3 -apple-system,system-ui,sans-serif;color:#1C1C1E}
+.nw-top{display:flex;justify-content:space-between}
+.nw-top b{font-weight:600}
+.nw-top span{color:#8E8E93;font-size:13px}
+
+/* her style */
+.btn.small{font-size:14px;padding:8px 14px}
+.style-top{display:flex;gap:14px;align-items:center}
+.style-top h2{font-size:26px}
+.style-top p{margin:6px 0 0;font-size:14px;line-height:1.4;color:var(--ink2)}
+.style-prev{width:104px;height:104px;flex:none;background:var(--sky);border:2.5px solid var(--ink);border-radius:26px;box-shadow:var(--sh-sm);overflow:hidden}
+.style-prev svg{width:100%;height:100%;display:block}
+.fam-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fam{font:800 15px var(--body);border:2.5px solid var(--ink);background:var(--white);border-radius:16px;padding:11px 10px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.fam span{font-weight:600;font-size:12px;color:var(--ink2)}
+.fam[aria-checked="true"]{background:var(--pink);box-shadow:var(--sh-sm)}
+.style-actions{display:flex;gap:10px}
+.style-actions .btn{flex:1;font-size:15px;padding:12px 10px}
+#styleSheet{align-items:flex-end}
+/* her idle moves (seeded) */
+#cowHop.idle-sway{transform-box:fill-box;transform-origin:50% 100%;animation:idleSway 3.4s ease-in-out infinite}
+#cowHop.idle-bob{animation:idleBob 1.8s ease-in-out infinite}
+#cowHop.idle-shuffle{animation:idleShuffle 2.6s ease-in-out infinite}
+@keyframes idleSway{0%,100%{transform:rotate(-1.4deg)}50%{transform:rotate(1.4deg)}}
+@keyframes idleBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes idleShuffle{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+#cowHop.hop{animation:hop .5s ease-out}
+#scene .tail{animation-duration:var(--tail,2.2s)}
+#scene .lid{animation-duration:var(--blink,4.6s)}
+.sax-stand{display:none}
+#scene[data-lv="1"] .sax-stand,#scene[data-lv="2"] .sax-stand{display:inline}
+
 /* scene: levels */
 .lvl2,.lvl3,.lvl4{display:none}
 #scene[data-lv="2"] .lvl2,#scene[data-lv="3"] .lvl2,#scene[data-lv="3"] .lvl3,#scene[data-lv="4"] .lvl2,#scene[data-lv="4"] .lvl3,#scene[data-lv="4"] .lvl4{display:inline}
@@ -524,10 +577,9 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
       <section class="screen" id="pasture" role="tabpanel" aria-labelledby="tabPasture" hidden>
         <div class="field" id="field">
          <div class="fscroll" id="fscroll"><div class="strip" id="strip">
-          <svg class="scene" id="scene" viewBox="0 0 2340 600" preserveAspectRatio="xMinYMax meet" data-lv="1" aria-label="Your pasture. Drag sideways to look around.">
-            <!-- the pasture is one 780-wide tile, drawn three times so it loops forever -->
-            <use href="#world" x="-780"/>
-            <g id="world" transform="translate(780,0)" filter="url(#wobble)" stroke="#1F1A17" stroke-linejoin="round" stroke-linecap="round">
+          <svg class="scene" id="scene" viewBox="0 0 780 600" preserveAspectRatio="xMinYMax meet" data-lv="1" aria-label="Your pasture. Drag sideways to look around.">
+            <!-- the pasture is 780 wide (two screens); its edges are invisible walls -->
+            <g id="world" filter="url(#wobble)" stroke="#1F1A17" stroke-linejoin="round" stroke-linecap="round">
               <rect x="0" y="-400" width="780" height="1040" fill="#A8D8F0" stroke="none"/>
               <!-- sun -->
               <g stroke-width="4">
@@ -541,13 +593,19 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
               </g>
               <!-- genre: lanterns (sky garland) -->
               <g class="item" id="item-lanterns" data-key="lanterns" hidden>
-                <path d="M228,36 Q305,78 388,50" fill="none" stroke-width="2.5"/>
+                <!-- two wooden posts carry the garland -->
+                <g stroke-width="3">
+                  <rect x="444" y="176" width="9" height="196" fill="#C98B55"/>
+                  <rect x="636" y="184" width="9" height="200" fill="#C98B55"/>
+                  <circle cx="448.5" cy="174" r="6" fill="#C98B55"/><circle cx="640.5" cy="182" r="6" fill="#C98B55"/>
+                </g>
+                <path d="M450,180 Q545,236 640,188" fill="none" stroke-width="2.5"/>
                 <g stroke-width="2.5">
-                  <path d="M262,52 v8 M302,62 v8 M346,60 v8" fill="none"/>
-                  <rect x="250" y="60" width="24" height="30" rx="10" fill="#F6A6B8"/>
-                  <rect x="290" y="70" width="24" height="30" rx="10" fill="#FFD966"/>
-                  <rect x="334" y="68" width="24" height="30" rx="10" fill="#F6A6B8"/>
-                  <path d="M256,66 v18 M268,66 v18 M296,76 v18 M308,76 v18 M340,74 v18 M352,74 v18" fill="none" stroke-width="1.5"/>
+                  <path d="M496,201 v8 M544,208 v8 M592,200 v8" fill="none"/>
+                  <rect x="484" y="209" width="24" height="30" rx="10" fill="#F6A6B8"/>
+                  <rect x="532" y="216" width="24" height="30" rx="10" fill="#FFD966"/>
+                  <rect x="580" y="208" width="24" height="30" rx="10" fill="#F6A6B8"/>
+                  <path d="M490,215 v18 M502,215 v18 M538,222 v18 M550,222 v18 M586,214 v18 M598,214 v18" fill="none" stroke-width="1.5"/>
                 </g>
               </g>
               <!-- genre: fireflies -->
@@ -607,6 +665,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 
               <!-- genre: saxophone -->
               <g class="item" id="item-saxophone" data-key="saxophone" hidden transform="rotate(-14 104 402)">
+                <path class="sax-stand" d="M98,410 L110,392 L122,410 M110,392 L110,376" fill="none" stroke-width="3.5"/>
                 <path d="M100,318 L100,382 Q100,408 118,402 L126,378" fill="none" stroke-width="14"/>
                 <path d="M100,318 L100,382 Q100,408 118,402 L126,378" fill="none" stroke="#FFD966" stroke-width="7.5"/>
                 <ellipse cx="128" cy="374" rx="10" ry="6" fill="#FFD966" stroke-width="3"/>
@@ -615,6 +674,8 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
               </g>
               <!-- genre: banjo -->
               <g class="item" id="item-banjo" data-key="banjo" hidden>
+                <path d="M368,402 L370,356 Q377,350 384,356 L386,402 Z" fill="#C98B55" stroke-width="3.5"/>
+                <ellipse cx="377" cy="356" rx="7.5" ry="3.2" fill="#F1D3A6" stroke-width="2.5"/>
                 <path d="M362,392 L384,322" fill="none" stroke-width="10"/>
                 <path d="M362,392 L384,322" fill="none" stroke="#C98B55" stroke-width="5"/>
                 <rect x="378" y="310" width="12" height="16" rx="3" fill="#C98B55" stroke-width="3" transform="rotate(18 384 318)"/>
@@ -659,7 +720,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
                       <path d="M-2,40 q14,26 30,0" fill="#F6A6B8" stroke-width="4"/>
                       <path d="M6,52 v6 M14,56 v6 M22,52 v6" fill="none" stroke-width="3.5"/>
                       <ellipse cx="0" cy="0" rx="72" ry="46" fill="#FFFFFF" stroke-width="5"/>
-                      <g fill="#1F1A17" stroke="none">
+                      <g fill="#1F1A17" stroke="none" id="spotBody">
                         <path d="M-44,-34 q16,-12 30,0 q8,15 -6,23 q-20,6 -24,-23z"/>
                         <path d="M12,-12 q18,-10 32,4 q6,18 -12,20 q-24,0 -20,-24z"/>
                         <path d="M-62,6 q8,-6 14,4 q2,12 -10,10 q-8,-2 -4,-14z"/>
@@ -673,6 +734,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
                       <path d="M56,12 h14 l5,17 h-24 z" fill="#FFD966" stroke-width="3.5"/>
                       <circle cx="63" cy="31" r="3" fill="#1F1A17" stroke="none"/>
                     </g>
+                    <g id="accNeck"></g>
                     <g class="head" transform="translate(82,-30)">
                       <g stroke-width="4">
                         <ellipse cx="-34" cy="-20" rx="18" ry="9" transform="rotate(-24 -34 -20)" fill="#FFFFFF"/>
@@ -682,7 +744,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
                       </g>
                       <g class="lvl3" stroke-width="3"><path d="M-16,-30 q-6,-14 2,-18 q2,8 6,14z M16,-30 q6,-14 -2,-18 q-2,8 -6,14z" fill="#FFD966"/></g>
                       <ellipse cx="0" cy="0" rx="35" ry="37" fill="#FFFFFF" stroke-width="5"/>
-                      <path d="M-26,-22 q8,-12 22,-8 q2,12 -10,16 q-12,2 -12,-8z" fill="#1F1A17" stroke="none"/>
+                      <path id="spotHead" class="spotH" d="M-26,-22 q8,-12 22,-8 q2,12 -10,16 q-12,2 -12,-8z" fill="#1F1A17" stroke="none"/>
                       <g stroke="none">
                         <circle cx="-13" cy="-4" r="5.5" fill="#1F1A17"/><circle cx="13" cy="-4" r="5.5" fill="#1F1A17"/>
                         <circle cx="-11.5" cy="-6" r="1.8" fill="#FFFFFF"/><circle cx="14.5" cy="-6" r="1.8" fill="#FFFFFF"/>
@@ -701,6 +763,8 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
                         <rect x="-48" y="-14" width="15" height="26" rx="6" fill="#F6A6B8" stroke-width="3.5"/>
                         <rect x="33" y="-14" width="15" height="26" rx="6" fill="#F6A6B8" stroke-width="3.5"/>
                       </g>
+                      <g id="accFace"></g>
+                      <g id="accTop"></g>
                     </g>
                     <!-- guitar lv4 -->
                     <g class="lvl4" transform="translate(-34,14) rotate(-26)" stroke-width="3.5">
@@ -757,7 +821,6 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
                 <text id="bubbleText" x="44" y="-6" text-anchor="middle" font-family="Figtree, sans-serif" font-weight="900" font-size="21" fill="#1F1A17" stroke="none">♪</text>
               </g>
             </g>
-            <use href="#world" x="780"/>
 
           </svg>
          </div></div>
@@ -787,6 +850,25 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
         <div class="fbsum" id="fbsum"></div>
         <ul class="card log" id="log"></ul>
         <button class="btn ghost" id="logAll" type="button">See all tracks</button>
+        <div class="sechead"><h2>Settings</h2></div>
+        <div class="card settings">
+          <div class="set-row">
+            <div class="set-txt"><b id="notifLbl">Morning milking</b><span id="notifSub">A nudge every day at <span class="t730">07:30</span></span></div>
+            <button class="switch" id="notifSwitch" type="button" role="switch" aria-checked="false" aria-labelledby="notifLbl"><i></i></button>
+          </div>
+          <div class="set-row">
+            <div class="set-txt"><b>Favourite genre</b><span id="styleSub">Pop</span></div>
+            <button class="btn ghost small" id="styleBtn" type="button">Change</button>
+          </div>
+          <div class="set-row">
+            <div class="set-txt"><b>Her look</b><span>Accessories, spots and moves are unique to you</span></div>
+            <button class="btn ghost small" id="lookShuffle" type="button">Shuffle</button>
+          </div>
+          <div class="set-row">
+            <div class="set-txt"><b>Milking time</b><span>When your fresh track is ready</span></div>
+            <span class="set-val t730">07:30</span>
+          </div>
+        </div>
       </section>
 
       <!-- TRACK LOG (full page) -->
@@ -865,6 +947,43 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
     <div class="tut-arrow" id="tutArrow" aria-hidden="true" hidden><svg viewBox="0 0 40 56"><path d="M20,4 V46 M8,34 L20,48 L32,34" fill="none" stroke="#FBFAF6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
   </div>
 
+  <!-- HER STYLE: favourite genre + a personal seed decide how the cow looks -->
+  <div class="tut gate" id="styleSheet" hidden role="dialog" aria-modal="true" aria-labelledby="styleTitle">
+    <div class="tut-card">
+      <div class="style-top">
+        <div class="style-prev" id="stylePrev" aria-hidden="true"></div>
+        <div><h2 id="styleTitle">What's her style?</h2><p>Pick the music you love most. She'll dress for it, and her look changes as you love new tracks.</p></div>
+      </div>
+      <div class="fam-grid" id="famGrid" role="radiogroup" aria-label="Favourite genre"></div>
+      <div class="style-actions">
+        <button class="btn ghost" id="shuffleBtn" type="button">Shuffle her look</button>
+        <button class="btn" id="styleDone" type="button">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIRST OPEN FROM THE HOME SCREEN: ask for the morning nudge -->
+  <div class="tut gate" id="nw" hidden role="dialog" aria-modal="true" aria-labelledby="nwTitle">
+    <div class="tut-card">
+      <div class="nw-preview" aria-hidden="true">
+        <span class="nw-ic"><svg viewBox="0 0 40 40" aria-hidden="true" width="100%" height="100%"><g transform="translate(20,21) scale(0.86) translate(-20,-21)">
+<ellipse cx="8" cy="14" rx="7" ry="3.5" transform="rotate(-25 8 14)" fill="#FFFFFF" stroke="#1F1A17" stroke-width="2.6"/>
+<ellipse cx="32" cy="14" rx="7" ry="3.5" transform="rotate(25 32 14)" fill="#FFFFFF" stroke="#1F1A17" stroke-width="2.6"/>
+<ellipse cx="20" cy="20" rx="13" ry="14" fill="#FFFFFF" stroke="#1F1A17" stroke-width="3"/>
+<path d="M10,12 q4,-5 9,-3 q0,5 -4,6 q-5,1 -5,-3z" fill="#1F1A17"/>
+<circle cx="15" cy="18" r="2" fill="#1F1A17"/><circle cx="25" cy="18" r="2" fill="#1F1A17"/>
+<ellipse cx="20" cy="28" rx="10" ry="6" fill="#F6A6B8" stroke="#1F1A17" stroke-width="2.6"/>
+<circle cx="16.5" cy="27.5" r="1.5" fill="#1F1A17"/><circle cx="23.5" cy="27.5" r="1.5" fill="#1F1A17"/>
+</g></svg></span>
+        <span class="nw-tx"><span class="nw-top"><b>Udderground</b><span>now</span></span><span>Morning milking! Your fresh track is ready.</span></span>
+      </div>
+      <h2 id="nwTitle">Never miss a milking.</h2>
+      <p>Every morning at <span class="t730">07:30</span> the cow has a fresh track waiting for you. Let her give you a little nudge, once a day and never more.</p>
+      <button class="btn" id="nwOn" type="button">Turn on notifications</button>
+      <button class="textbtn" id="nwLater" type="button">Not now</button>
+    </div>
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 
@@ -921,8 +1040,8 @@ const SCALE=[.6,.78,.9,1];
 const levelOf=d=>LEVELS.reduce((a,l)=>d>=l.min?l:a,LEVELS[0]);
 
 /* ---------- state ---------- */
-const freshTaste=()=>({depth:0,loved:[],blockedArtists:[],avoidGenres:[],usedTracks:[],usedArtists:[],usedGenres:[]});
-const fresh=()=>({onboarded:false,songs:[],start:null,offsetDays:0,days:{},lastListenedKey:null,listenedDays:0,streak:0,best:0,seenBook:0,swiped:false,tutSeen:false,milk:0,discovered:[],profile:null,taste:freshTaste()});
+const freshTaste=()=>({gw:{},likedGenres:[],depth:0,loved:[],blockedArtists:[],avoidGenres:[],usedTracks:[],usedArtists:[],usedGenres:[]});
+const fresh=()=>({onboarded:false,songs:[],start:null,offsetDays:0,days:{},lastListenedKey:null,listenedDays:0,streak:0,best:0,seenBook:0,swiped:false,tutSeen:false,notif:false,nwSeen:false,fav:null,seed:0,milk:0,discovered:[],profile:null,taste:freshTaste()});
 function load(){try{const r=localStorage.getItem(KEY);if(r){const o=JSON.parse(r);const s=Object.assign(fresh(),o);s.taste=Object.assign(freshTaste(),o.taste||{});return s;}}catch(e){}return fresh();}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 let S=load();
@@ -1171,7 +1290,8 @@ $('#startBtn').addEventListener('click',()=>{
   const before=JSON.stringify(S.songs.map(s=>s.dzId||s.title));
   S.songs=picks.map(p=>({title:p.title,artist:p.artist,cover:p.cover||'',dzId:/^dz\d+$/.test(p.id)?+p.id.slice(2):null}));
   if(JSON.stringify(S.songs.map(s=>s.dzId||s.title))!==before)S.profile=null;
-  S.onboarded=true;if(!S.start)S.start=todayKey();save();showView();setTab('today');
+  const go=()=>{S.onboarded=true;if(!S.start)S.start=todayKey();save();showView();setTab('today');};
+  if(!S.fav)openStyle(go);else go();
 });
 function showView(){ $('#onb').hidden=S.onboarded; $('#app').hidden=!S.onboarded; if(!S.onboarded)initOnb(); else renderAll(); }
 
@@ -1197,7 +1317,7 @@ function mkSug(t,extra){return Object.assign({id:t.id,title:t.title_short||t.tit
 // Every "Already knew it" raises depth: a lower fan ceiling and more hops away from your picks.
 async function hiddenGem(P,n){
   const T=S.taste;const known=new Set([...P.artists.map(a=>a.id),...T.blockedArtists,...T.usedArtists]);
-  const seeds=[...P.artists,...T.loved];const seed=seeds[n%seeds.length];
+  const seeds=(T.loved.length&&Math.random()<.4)?T.loved:P.artists;const seed=seeds[n%seeds.length];
   const maxFans=Math.max(2000,Math.round(50000/Math.pow(2,T.depth)));
   const ok=a=>a&&!known.has(a.id);
   let pool=((await dz(`/artist/${seed.id}/related?limit=30`)).data||[]);
@@ -1227,10 +1347,14 @@ function vibeWords(t,P){const w=[];if(t.bpm>0)w.push(`${Math.round(t.bpm)} BPM`)
   if(typeof t.gain==='number')w.push(t.gain>-9?'punchy':'soft');return w.join(' · ')||'similar mood';}
 async function sameVibe(P){
   const T=S.taste;const mine=new Set(P.genres.map(g=>g.id));const known=new Set([...P.artists.map(a=>a.id),...T.blockedArtists,...T.usedArtists]);
-  const all=(((await dz('/genre')).data)||[]).filter(g=>!SKIP_GENRES.includes(g.id)&&!mine.has(g.id)&&!T.avoidGenres.includes(g.id));
+  const genres=(((await dz('/genre')).data)||[]);
+  const liked=genres.filter(g=>(T.likedGenres||[]).includes(g.id));
+  const all=genres.filter(g=>!SKIP_GENRES.includes(g.id)&&!mine.has(g.id)&&!T.avoidGenres.includes(g.id)&&!(S.fav&&famOf(g.name)===S.fav)&&!(T.likedGenres||[]).includes(g.id));
   if(!all.length)return null;
   const unused=all.filter(g=>!T.usedGenres.includes(g.id));
-  for(const g of shuffle(unused.length?unused:all).slice(0,3)){
+  // now and then, go back to a world you loved (different artist)
+  const order=((liked.length&&Math.random()<.3)?shuffle(liked):[]).concat(shuffle(unused.length?unused:all)).slice(0,3);
+  for(const g of order){
     let list=(((await dz(`/chart/${g.id}/tracks?limit=40`).catch(()=>({data:[]}))).data)||[]);
     list=list.filter(t=>t.preview&&t.artist&&!known.has(t.artist.id)&&!T.usedTracks.includes(t.id));
     if(!list.length)continue;
@@ -1269,7 +1393,7 @@ function setTab(t){
   tab=t;
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t?'true':'false'));
   ['today','pasture','stats'].forEach(id=>{$('#'+id).hidden=id!==t;});
-  if(t==='pasture'){$('#tabDot').hidden=true;renderPasture();layoutField();}
+  if(t==='pasture'){$('#tabDot').hidden=true;const fresh=renderPasture();layoutField();if(fresh&&fresh.length)setTimeout(()=>scrollToItem(fresh[0]),350);}
   $('#bookPage').hidden=true;$('#logPage').hidden=true;
   if(t==='stats'){$('#statsDot').hidden=true;renderStats();}
   hideTip();
@@ -1417,7 +1541,9 @@ function flyDrop(){
 const FB_MSG={love:"Saved. She'll look for more like this.",nope:"Got it. She'll steer away from this.",knew:"Noted. The cow will dig deeper next time."};
 function applyTaste(s,now,prev){
   const T=S.taste;
-  if(prev==='love')T.loved=T.loved.filter(a=>a.id!==s.artistId);
+  T.likedGenres=T.likedGenres||[];
+  if(prev==='love'){T.loved=T.loved.filter(a=>a.id!==s.artistId);T.likedGenres=T.likedGenres.filter(g=>g!==s.genreId);}
+  if(now==='love'&&s.type==='same_vibe'&&s.genreId&&!T.likedGenres.includes(s.genreId))T.likedGenres.push(s.genreId);
   if(prev==='nope'&&s.genreId)T.avoidGenres=T.avoidGenres.filter(g=>g!==s.genreId);
   if(prev==='knew')T.depth=Math.max(0,T.depth-1);
   if(prev==='nope'||prev==='knew')T.blockedArtists=T.blockedArtists.filter(a=>a!==s.artistId);
@@ -1428,7 +1554,7 @@ function applyTaste(s,now,prev){
 }
 function setFeedback(v){
   const d=today();if(!d)return;const prev=d.fb;
-  d.fb=prev===v?null:v;applyTaste(d.sug,d.fb,prev);
+  d.fb=prev===v?null:v;applyTaste(d.sug,d.fb,prev);nudgeStyle(d.sug,d.fb,prev);
   if(!S.swiped){S.swiped=true;$('#swipeHint').hidden=true;}
   save();renderFeedback();renderFbMark(true);
   toast(d.fb?FB_MSG[v]:'Okay, forgotten.');
@@ -1514,15 +1640,17 @@ function renderPasture(){
   scene.setAttribute('data-lv',lv.n);
   $('#cowWrap').setAttribute('transform',`translate(185,${(518-78*sc).toFixed(1)}) scale(${sc})`);
   const m=mood();scene.classList.remove('mood-happy','mood-waiting','mood-bored');scene.classList.add('mood-'+m);
-  let changed=false;
+  let changed=false;const freshKeys=[];
   Object.keys(ITEM_NAMES).forEach(k=>{
     const el=document.getElementById('item-'+k);const d=S.discovered.find(x=>x.key===k);
     if(d){el.removeAttribute('hidden');el.setAttribute('tabindex','0');el.setAttribute('role','button');el.setAttribute('aria-label',`${ITEM_NAMES[k]}, unlocked by ${d.title}`);
-      if(d.fresh&&tab==='pasture'){el.classList.remove('pop');void el.getBoundingClientRect();if(!RM.matches)el.classList.add('pop');d.fresh=false;changed=true;}}
+      if(d.fresh&&tab==='pasture'){el.classList.remove('pop');void el.getBoundingClientRect();if(!RM.matches)el.classList.add('pop');d.fresh=false;changed=true;freshKeys.push(k);}}
     else el.setAttribute('hidden','');
   });
   if(changed)save();
   if(!mooTimer)placeBubble(m==='waiting'?'♪':m==='bored'?'yaaawn…':'');
+  applyLook();
+  return freshKeys;
 }
 function moo(){
   const hop=$('#cowHop');hop.classList.remove('hop');void hop.getBoundingClientRect();if(!RM.matches)hop.classList.add('hop');
@@ -1550,19 +1678,20 @@ document.querySelectorAll('.item').forEach(el=>{
   el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showTip(el);}});
 });
 $('#field').addEventListener('click',hideTip);
-/* endless meadow: the 780-wide tile is drawn three times; scrolling wraps back into the middle copy */
-const TILE=780,fsc=$('#fscroll');let fScale=1,fReady=false,fWrapping=false;
+/* the meadow is two screens wide; its edges are invisible walls */
+const TILE=780,fsc=$('#fscroll');let fScale=1,fReady=false;
 function layoutField(){
   const fw=fsc.clientWidth,fh=fsc.clientHeight;if(!fw||!fh)return;
-  const off=fReady?(fsc.scrollLeft/fScale):null;
+  const off=fReady?(fsc.scrollLeft/fScale):0;
   fScale=Math.min(fw/390,fh/600);
-  const sv=$('#scene');sv.style.width=(TILE*3*fScale)+'px';sv.style.height=(600*fScale)+'px';$('#strip').style.width=(TILE*3*fScale)+'px';
-  fsc.scrollLeft=off!=null?off*fScale:TILE*fScale-(fw-390*fScale)/2;fReady=true;
+  const sv=$('#scene');sv.style.width=(TILE*fScale)+'px';sv.style.height=(600*fScale)+'px';$('#strip').style.width=Math.max(fw,TILE*fScale)+'px';
+  fsc.scrollLeft=off*fScale;fReady=true;
 }
-fsc.addEventListener('scroll',()=>{
-  hideTip();if(fWrapping)return;const T=TILE*fScale,x=fsc.scrollLeft;
-  if(x<T*.5||x>T*1.5){fWrapping=true;fsc.scrollLeft=x<T*.5?x+T:x-T;requestAnimationFrame(()=>{fWrapping=false;});}
-},{passive:true});
+function scrollToItem(k){
+  const el=document.getElementById('item-'+k);if(!el||!fReady)return;
+  try{const bb=el.getBBox();const x=(bb.x+bb.width/2)*fScale-fsc.clientWidth/2;fsc.scrollTo({left:Math.max(0,x),behavior:RM.matches?'auto':'smooth'});}catch(e){}
+}
+fsc.addEventListener('scroll',hideTip,{passive:true});
 window.addEventListener('resize',()=>{if(tab==='pasture')layoutField();});
 (function(){ // mouse drag on desktop
   let down=false,moved=false,sx=0,sl=0;
@@ -1629,7 +1758,7 @@ function renderStats(){
   else{$('#stNext').textContent='Top level reached';$('#stBar').style.width='100%';}
   $('#ladder').innerHTML=LEVELS.map(l=>`<li class="${l.n===lv.n?'now':l.n<lv.n?'got':''}"><b>${l.name}</b>${l.min}+ days</li>`).join('');
   renderBook();
-  renderLog();
+  renderLog();renderSettings();
 }
 function logRows(keys){
   const tk=todayKey();
@@ -1666,9 +1795,164 @@ resetBtn.addEventListener('click',()=>{
   resetPlayer();S=fresh();save();closeMenu();$('#tabDot').hidden=true;$('#statsDot').hidden=true;tab='today';showView();
 });
 
-function renderAll(){loadToday();renderPasture();setTab(tab);}
+function renderAll(){loadToday();renderPasture();setTab(tab);if(!S.fav&&$('#styleSheet').hidden&&$('#nw').hidden)openStyle();}
 
 /* ---------- first-run tutorial: only in iOS Safari, never from the Home Screen ---------- */
+/* ---------- her look: favourite genre + a personal seed, nudged over time by what you love ---------- */
+const FAMS=[
+ {k:'pop',name:'Pop',hint:'Bright, catchy, big choruses',re:/pop/i},
+ {k:'hiphop',name:'Hip-hop & Rap',hint:'Beats, bars, bass',re:/rap|hip ?hop|trap|grime|drill/i},
+ {k:'rock',name:'Rock & Punk',hint:'Guitars up loud',re:/rock|metal|punk|alternative|indie|grunge|emo/i},
+ {k:'electronic',name:'Electronic',hint:'Synths, clubs, chill beats',re:/electro|dance|house|techno|edm|ambient|trance|dubstep|drum|synth|lo-?fi/i},
+ {k:'jazzsoul',name:'Jazz & Soul',hint:'Grooves, horns, late nights',re:/jazz|soul|funk|r&b|rnb|blues|gospel/i},
+ {k:'folk',name:'Folk & Country',hint:'Acoustic, warm, storytelling',re:/folk|country|acoustic|singer|bluegrass|americana/i},
+ {k:'classical',name:'Classical',hint:'Orchestras, piano, scores',re:/classical|opera|orchestra|film|soundtrack|piano|baroque/i},
+ {k:'world',name:'Latin & World',hint:'Rhythms from everywhere',re:/latin|african|afro|reggae|brazil|cumbia|world|reggaeton|salsa|asian|indian|k-pop/i}
+];
+const famOf=g=>{const x=FAMS.find(f=>f.k!=='pop'&&f.re.test(g||''));return x?x.k:'pop';};
+const famName=k=>(FAMS.find(f=>f.k===k)||FAMS[0]).name;
+function famWeights(){const w=Object.assign({},(S.taste&&S.taste.gw)||{});if(S.fav)w[S.fav]=(w[S.fav]||0)+3;return w;}
+function domFam(){const w=famWeights();let best=S.fav||'pop',bv=-1e9;for(const k in w)if(w[k]>bv){bv=w[k];best=k;}return best;}
+// accessories (drawn in the cow's own coordinates)
+const QP=(t)=>{const a=[44,-18],b=[62,22],c=[100,4],u=1-t;return[u*u*a[0]+2*u*t*b[0]+t*t*c[0],u*u*a[1]+2*u*t*b[1]+t*t*c[1]];};
+const NECKLINE='M44,-18 Q62,22 100,4';
+function starPath(cx,cy,r){let d='';for(let i=0;i<10;i++){const a=i/10*Math.PI*2-Math.PI/2,rr=i%2?r*.45:r;d+=(i?'L':'M')+(cx+Math.cos(a)*rr).toFixed(1)+','+(cy+Math.sin(a)*rr).toFixed(1);}return d+'Z';}
+function flowerG(x,y,r,c){let g='';for(let i=0;i<5;i++){const a=i/5*Math.PI*2;g+=`<circle cx="${(x+Math.cos(a)*r).toFixed(1)}" cy="${(y+Math.sin(a)*r).toFixed(1)}" r="${(r*.7).toFixed(1)}" fill="${c}" stroke-width="2"/>`;}return g+`<circle cx="${x}" cy="${y}" r="${(r*.55).toFixed(1)}" fill="#FFD966" stroke-width="2"/>`;}
+const heartP=(x,y,s)=>`M${x},${y+s*.9} C${x-s*1.3},${y} ${x-s*.9},${y-s*.9} ${x},${y-s*.3} C${x+s*.9},${y-s*.9} ${x+s*1.3},${y} ${x},${y+s*.9}Z`;
+const ACC={
+ top:{
+  bow:c=>`<g transform="translate(20,-34) rotate(18)"><path d="M0,0 L-14,-9 L-14,9 Z M0,0 L14,-9 L14,9 Z" fill="${c}" stroke-width="3"/><circle r="4" fill="${c}" stroke-width="2.5"/></g>`,
+  stars:c=>`<path d="${starPath(-22,-30,8)}" fill="${c}" stroke-width="2.5"/><path d="${starPath(23,-33,6)}" fill="#FFD966" stroke-width="2.5"/>`,
+  cap:c=>`<path d="M-28,-26 Q-26,-57 0,-57 Q26,-57 28,-26 Z" fill="${c}" stroke-width="3.5"/><path d="M-26,-29 L-50,-23 Q-53,-16 -46,-15 L-24,-21 Z" fill="${c}" stroke-width="3"/><circle cx="0" cy="-57" r="3" fill="${c}" stroke-width="2.5"/>`,
+  mohawk:c=>`<path d="M-14,-34 L-12,-52 L-6,-40 L-2,-62 L3,-40 L9,-57 L12,-38 L16,-48 L16,-33 Z" fill="${c}" stroke-width="3"/>`,
+  beret:c=>`<g transform="rotate(-12 -4 -38)"><ellipse cx="-4" cy="-38" rx="27" ry="10" fill="${c}" stroke-width="3.5"/><path d="M-4,-48 v-6" stroke-width="3.5"/></g>`,
+  flowercrown:c=>[[-26,-27],[-13,-35],[0,-38],[13,-35],[26,-27]].map(([x,y],i)=>flowerG(x,y,4.2,i%2?'#FFFFFF':c)).join(''),
+  strawhat:c=>`<ellipse cx="0" cy="-32" rx="48" ry="11" fill="#F1D3A6" stroke-width="3.5"/><path d="M-22,-34 Q-21,-61 0,-61 Q21,-61 22,-34 Z" fill="#F1D3A6" stroke-width="3.5"/><path d="M-22,-39 Q0,-34 22,-39" fill="none" stroke="${c}" stroke-width="5"/>`,
+  crown:c=>`<path d="M-16,-33 L-18,-54 L-8,-44 L0,-59 L8,-44 L18,-54 L16,-33 Z" fill="#FFD966" stroke-width="3"/><circle cx="0" cy="-41" r="3" fill="${c}" stroke-width="1.5"/>`,
+  flower:c=>flowerG(29,-33,7,c)
+ },
+ face:{
+  heartshades:c=>`<path d="M-5,-5 H5" stroke-width="3"/><path d="${heartP(-14,-5,9)}" fill="${c}" stroke-width="3"/><path d="${heartP(14,-5,9)}" fill="${c}" stroke-width="3"/>`,
+  roundshades:c=>`<path d="M-5,-5 H5" stroke-width="3"/><circle cx="-14" cy="-4" r="10" fill="${c}" stroke-width="3"/><circle cx="14" cy="-4" r="10" fill="${c}" stroke-width="3"/><path d="M-18,-8 l4,-2 M10,-8 l4,-2" stroke="#FFFFFF" stroke-width="2"/>`,
+  visor:c=>`<rect x="-31" y="-13" width="62" height="17" rx="8.5" fill="${c}" stroke-width="3.5"/><path d="M-22,-8 H4" stroke="#FFFFFF" stroke-width="3"/>`,
+  monocle:c=>`<circle cx="13" cy="-4" r="10" fill="#FFFFFF" fill-opacity=".25" stroke="#FFD966" stroke-width="3.5"/><path d="M22,1 Q29,14 21,26" fill="none" stroke="#FFD966" stroke-width="2"/>`
+ },
+ neck:{
+  chain:c=>`<path d="${NECKLINE}" fill="none" stroke="#1F1A17" stroke-width="8"/><path d="${NECKLINE}" fill="none" stroke="#FFD966" stroke-width="4.5" stroke-dasharray="5 2"/><circle cx="${QP(.38)[0]}" cy="${QP(.38)[1]+6}" r="6" fill="#FFD966" stroke-width="2.5"/>`,
+  bowtie:c=>`<g transform="translate(64,10) rotate(24)"><path d="M0,0 L-15,-9 L-15,9 Z M0,0 L15,-9 L15,9 Z" fill="${c}" stroke-width="3"/><rect x="-4" y="-5" width="8" height="10" rx="2" fill="${c}" stroke-width="2.5"/></g>`,
+  studs:c=>`<path d="${NECKLINE}" fill="none" stroke="#1F1A17" stroke-width="9"/>`+[.15,.35,.55,.75].map(t=>{const[x,y]=QP(t);return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6" fill="#FFFFFF" stroke="none"/>`;}).join(''),
+  scarf:c=>`<path d="${NECKLINE} L95,10 Q64,28 45,-8 Z" fill="${c}" stroke-width="3"/><path d="M57,12 L49,34 L66,26 Z" fill="${c}" stroke-width="3"/>`,
+  pearls:c=>[.1,.22,.34,.46,.58,.7,.82].map(t=>{const[x,y]=QP(t);return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.6" fill="#FFFFFF" stroke-width="1.6"/>`;}).join(''),
+  lei:c=>[.08,.22,.36,.5,.64,.78].map((t,i)=>{const[x,y]=QP(t);return flowerG(+x.toFixed(1),+y.toFixed(1),3.4,[c,'#FF8FAB','#FFD966'][i%3]);}).join(''),
+  glow:c=>`<path d="${NECKLINE}" fill="none" stroke="#1F1A17" stroke-width="8"/><path d="${NECKLINE}" fill="none" stroke="${c}" stroke-width="4.5"/><path d="${NECKLINE}" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="3 6"/>`
+ }
+};
+const KIT={
+ pop:{top:['bow','stars',null],face:['heartshades',null],neck:['scarf','pearls'],cols:['#FF8FAB','#C9B8F0','#94D3F2']},
+ hiphop:{top:['cap',null],face:['roundshades'],neck:['chain'],cols:['#FF8FAB','#94D3F2','#6FCB7F','#1F1A17'],lens:'#1F1A17'},
+ rock:{top:['mohawk',null],face:['roundshades',null],neck:['studs'],cols:['#FF8FAB','#6FCB7F','#94D3F2'],lens:'#1F1A17'},
+ electronic:{top:['stars',null],face:['visor'],neck:['glow','chain'],cols:['#94D3F2','#C9B8F0','#6FCB7F']},
+ jazzsoul:{top:['beret'],face:['roundshades',null],neck:['bowtie'],cols:['#1F1A17','#E26D5A','#5B6FA8']},
+ folk:{top:['flowercrown','strawhat'],face:[null],neck:['scarf'],cols:['#FF8FAB','#FFD966','#94D3F2']},
+ classical:{top:['crown',null],face:['monocle'],neck:['bowtie','pearls'],cols:['#1F1A17','#5B6FA8']},
+ world:{top:['flower'],face:[null,'heartshades'],neck:['lei','scarf'],cols:['#FF8FAB','#FFB38A','#FFD966']}
+};
+function lookFor(fam,seed){
+  const kit=KIT[fam]||KIT.pop,r=rng((seed||1)+FAMS.findIndex(f=>f.k===fam)*7919+1),pick=a=>a[Math.floor(r()*a.length)];
+  const c=pick(kit.cols);
+  return {fam,c,top:pick(kit.top),face:pick(kit.face),neck:pick(kit.neck),lens:kit.lens||c};
+}
+function movesFor(seed){const r=rng((seed||1)*31+7),pick=a=>a[Math.floor(r()*a.length)];
+  return {idle:pick(['sway','bob','shuffle','still']),tail:pick([1.4,2.2,3.2]),blink:pick([3.2,4.6,6.2]),spots:pick(['#1F1A17','#1F1A17','#6B4A3A','#3E4A61'])};}
+function accSVG(L){
+  return {top:L.top?ACC.top[L.top](L.c):'',face:L.face?ACC.face[L.face](L.face==='roundshades'?L.lens:L.c):'',neck:L.neck?ACC.neck[L.neck](L.c):''};
+}
+function applyLook(){
+  if(!S.seed)return;
+  const L=lookFor(domFam(),S.seed),M=movesFor(S.seed),a=accSVG(L);
+  $('#accTop').innerHTML=a.top;$('#accFace').innerHTML=a.face;$('#accNeck').innerHTML=a.neck;
+  $('#spotBody').setAttribute('fill',M.spots);$('#spotHead').setAttribute('fill',M.spots);
+  const sc=$('#scene');sc.style.setProperty('--tail',M.tail+'s');sc.style.setProperty('--blink',M.blink+'s');
+  const h=$('#cowHop');['sway','bob','shuffle'].forEach(x=>h.classList.remove('idle-'+x));if(M.idle!=='still')h.classList.add('idle-'+M.idle);
+  S.lookFam=L.fam;
+}
+function previewSVG(fam){
+  const L=lookFor(fam,S.seed),M=movesFor(S.seed),a=accSVG(L);
+  const head=document.querySelector('#cowTap .head').cloneNode(true);
+  head.querySelector('#accTop').innerHTML=a.top;head.querySelector('#accFace').innerHTML=a.face;
+  head.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));head.removeAttribute('class');head.setAttribute('transform','translate(0,0)');
+  head.querySelectorAll('.lid').forEach(e=>e.remove());
+  const sp=head.querySelector('.spotH');if(sp)sp.setAttribute('fill',M.spots);
+  return `<svg viewBox="-62 -72 124 124" aria-hidden="true"><g stroke="#1F1A17" stroke-linejoin="round" stroke-linecap="round"><g transform="translate(-82,30)">${a.neck}</g>${head.outerHTML}</g></svg>`;
+}
+let styleFam=null,styleAfter=null;
+function renderStylePicker(){
+  $('#famGrid').innerHTML=FAMS.map(f=>`<button class="fam" type="button" role="radio" aria-checked="${f.k===styleFam}" data-fam="${f.k}">${f.name}<span>${f.hint}</span></button>`).join('');
+  $('#stylePrev').innerHTML=previewSVG(styleFam||'pop');
+}
+function openStyle(after){
+  if(!S.seed){S.seed=Math.floor(Math.random()*2147483646)+1;}
+  styleFam=S.fav||'pop';styleAfter=after||null;renderStylePicker();$('#styleSheet').hidden=false;
+}
+$('#famGrid').addEventListener('click',e=>{const b=e.target.closest('[data-fam]');if(!b)return;styleFam=b.dataset.fam;renderStylePicker();});
+$('#shuffleBtn').addEventListener('click',()=>{S.seed=Math.floor(Math.random()*2147483646)+1;renderStylePicker();});
+$('#styleDone').addEventListener('click',()=>{
+  if(S.fav&&styleFam!==S.fav){ // a new favourite takes over right away; likes keep shaping it from here
+    const T=S.taste;T.gw=T.gw||{};const top=Math.max(0,...Object.entries(T.gw).filter(([k])=>k!==styleFam).map(([,v])=>v));
+    T.gw[styleFam]=Math.max(T.gw[styleFam]||0,top-3+.5);}
+  S.fav=styleFam;save();$('#styleSheet').hidden=true;applyLook();renderSettings();
+  const f=styleAfter;styleAfter=null;if(f)f();else toast(`She's dressed for ${famName(S.fav)}.`);
+});
+// likes move her style (and the picks): love +2, already knew +1, not for me -1.5
+const FBW={love:2,knew:1,nope:-1.5};
+function nudgeStyle(s,now,prev){
+  const T=S.taste;T.gw=T.gw||{};const f=famOf(s.genre),before=domFam();
+  if(prev)T.gw[f]=(T.gw[f]||0)-FBW[prev];
+  if(now)T.gw[f]=(T.gw[f]||0)+FBW[now];
+  const after=domFam();
+  if(after!==before&&S.seed){applyLook();setTimeout(()=>toast(`She's into ${famName(after)} lately. New look!`),2700);}
+}
+
+/* ---------- morning milking notifications ---------- */
+// Permission is asked here; the daily 7:30 push itself will come from the server (sw.js shows it).
+const NOTIF_OK='Notification' in window;
+const IS_STANDALONE=navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
+function notifState(){
+  if(!NOTIF_OK||!IS_STANDALONE)return 'unsupported';
+  if(Notification.permission==='denied')return 'blocked';
+  return (Notification.permission==='granted'&&S.notif)?'on':'off';
+}
+async function enableNotif(){
+  if(!NOTIF_OK||!IS_STANDALONE){toast('Notifications work once Udderground is on your Home Screen.');return false;}
+  let perm=Notification.permission;
+  if(perm==='default'){try{perm=await Notification.requestPermission();}catch(e){}}
+  if(perm==='granted'){S.notif=true;save();renderSettings();toast(`Done. The cow will nudge you at ${T730}.`);return true;}
+  S.notif=false;save();renderSettings();
+  if(perm==='denied')toast('Notifications are blocked. Turn them on in Settings > Notifications > Udderground.');
+  return false;
+}
+function renderSettings(){
+  $('#styleSub').textContent=S.fav?`${famName(S.fav)}${domFam()!==S.fav?` · lately ${famName(domFam())}`:''}`:'Not chosen yet';
+  const st=notifState(),sw=$('#notifSwitch'),sub=$('#notifSub');
+  sw.setAttribute('aria-checked',st==='on'?'true':'false');sw.classList.toggle('blocked',st==='blocked'||st==='unsupported');
+  sub.innerHTML=st==='on'?`A nudge every day at ${T730}`:st==='blocked'?'Blocked. Turn it on in Settings > Notifications > Udderground.':st==='unsupported'?'Works once Udderground is on your Home Screen.':`Off. Turn on for a nudge at ${T730}.`;
+}
+$('#styleBtn').addEventListener('click',()=>openStyle());
+$('#lookShuffle').addEventListener('click',()=>{S.seed=Math.floor(Math.random()*2147483646)+1;save();applyLook();toast('New look! Go say hi in the pasture.');});
+$('#notifSwitch').addEventListener('click',()=>{
+  const st=notifState();
+  if(st==='on'){S.notif=false;save();renderSettings();toast('Notifications off. The cow will wait quietly.');return;}
+  if(st==='unsupported'){enableNotif();return;}
+  if(st==='blocked'){toast('Notifications are blocked. Turn them on in Settings > Notifications > Udderground.');return;}
+  enableNotif();
+});
+const nwEl=$('#nw');
+function openNW(){nwEl.hidden=false;$('#nwOn').focus({preventScroll:true});}
+function closeNW(){nwEl.hidden=true;S.nwSeen=true;save();}
+$('#nwOn').addEventListener('click',async()=>{await enableNotif();closeNW();});
+$('#nwLater').addEventListener('click',()=>{closeNW();toast('You can turn it on any time in Stats > Settings.');});
+if('serviceWorker' in navigator&&location.protocol==='https:'&&IS_STANDALONE){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+
 const tutEl=$('#tut');let GATED=false;
 function tutStep(n){
   $('#tut1').hidden=n!==1;$('#tut2').hidden=n!==2;$('#tutArrow').hidden=n!==2;tutEl.classList.toggle('s2',n===2);
@@ -1697,7 +1981,7 @@ $('#howBtn').addEventListener('click',()=>{closeMenu();openTut(2);});
 const turb=document.getElementById('turb');let seed=1;
 setInterval(()=>{if(RM.matches||document.hidden||tab!=='pasture')return;seed=seed%6+1;turb.setAttribute('seed',seed);},340);
 
-if(!GATED)showView();
+if(!GATED){showView();if((IS_STANDALONE&&!S.nwSeen)||location.hash==='#notify')openNW();}
 })();
 </script>
 </body>
