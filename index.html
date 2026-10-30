@@ -239,7 +239,11 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 /* pasture (scene untouched) */
 #pasture{overflow:hidden}
 .field{position:absolute;inset:0;background:linear-gradient(to bottom,var(--scene-sky) 0 70%,var(--scene-meadow) 70%)}
-.fscroll{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x;cursor:grab}
+.fscroll{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x;cursor:grab}
+.strip{contain:layout paint}
+.field svg.scene{will-change:transform;transform:translateZ(0)}
+/* during a scroll, pause every animation in the meadow so the phone only has to slide a picture */
+.fscroll.moving #scene *{animation-play-state:paused!important}
 .fscroll::-webkit-scrollbar{display:none}
 .fscroll.drag{cursor:grabbing}
 .strip{position:relative;height:100%}
@@ -1691,7 +1695,12 @@ function scrollToItem(k){
   const el=document.getElementById('item-'+k);if(!el||!fReady)return;
   try{const bb=el.getBBox();const x=(bb.x+bb.width/2)*fScale-fsc.clientWidth/2;fsc.scrollTo({left:Math.max(0,x),behavior:RM.matches?'auto':'smooth'});}catch(e){}
 }
-fsc.addEventListener('scroll',hideTip,{passive:true});
+// while you touch or scroll the meadow, the hand-drawn "boil" pauses so scrolling stays smooth
+let fBusy=0;
+function meadowBusy(){fBusy=Date.now();fsc.classList.add('moving');clearTimeout(meadowBusy.t);meadowBusy.t=setTimeout(()=>{fsc.classList.remove('moving');},450);}
+fsc.addEventListener('scroll',()=>{hideTip();meadowBusy();},{passive:true});
+fsc.addEventListener('touchstart',meadowBusy,{passive:true});
+fsc.addEventListener('touchmove',meadowBusy,{passive:true});
 window.addEventListener('resize',()=>{if(tab==='pasture')layoutField();});
 (function(){ // mouse drag on desktop
   let down=false,moved=false,sx=0,sl=0;
@@ -1979,7 +1988,23 @@ $('#howBtn').addEventListener('click',()=>{closeMenu();openTut(2);});
 
 /* boiling lines */
 const turb=document.getElementById('turb');let seed=1;
-setInterval(()=>{if(RM.matches||document.hidden||tab!=='pasture')return;seed=seed%6+1;turb.setAttribute('seed',seed);},340);
+setInterval(()=>{if(RM.matches||document.hidden||tab!=='pasture'||Date.now()-fBusy<700)return;seed=seed%6+1;turb.setAttribute('seed',seed);},340);
+
+/* ---------- self-update: the Home Screen app checks for a newer version on open ---------- */
+const BUILD='20261031-003848';
+async function checkUpdate(){
+  if(BUILD.startsWith('__')||location.protocol!=='https:')return;
+  try{
+    const r=await fetch('./index.html?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;
+    const m=(await r.text()).match(/const BUILD='([^']+)'/);
+    if(m&&m[1]!==BUILD&&!sessionStorage.getItem('ug-upd-'+m[1])){
+      sessionStorage.setItem('ug-upd-'+m[1],'1');toast('Fresh version found. Updating…');
+      setTimeout(()=>location.replace('./?v='+encodeURIComponent(m[1])),900);
+    }
+  }catch(e){}
+}
+checkUpdate();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate();});
 
 if(!GATED){showView();if((IS_STANDALONE&&!S.nwSeen)||location.hash==='#notify')openNW();}
 })();
