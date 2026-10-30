@@ -1,0 +1,1155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Udderground</title>
+<meta name="description" content="Fresh tracks from the udderground. One new song a day, one happy cow.">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Udderground">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#FFF8EC">
+<style>
+/* base reset (what the artifact host used to provide) */
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);height:100%;box-sizing:border-box}
+body{margin:0;font:14px system-ui,sans-serif;-webkit-text-size-adjust:100%}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Patrick+Hand&display=swap">
+<style>
+/* Layout: one phone-sized column (390px) — notebook-paper app screens over a cream desk; the pasture is a full-bleed marker drawing. Single-theme by choice: it is a paper doodle world. */
+:root{
+  --paper:#FFF8EC; --desk:#F3E6CC; --ink:#1F1A17; --ink-soft:#5B5049;
+  --meadow:#9BD17A; --meadow-dk:#6FAE52; --pink:#F6A6B8; --butter:#FFD966; --sky:#A8D8F0;
+  --wood:#C98B55; --white:#FFFFFF; --line:rgba(120,180,215,.35); --margin:rgba(246,166,184,.7);
+  --display:'Gaegu','Patrick Hand','Comic Sans MS',cursive;
+  --ui:'Patrick Hand','Gaegu','Comic Sans MS',cursive;
+  --wob:255px 15px 225px 15px/15px 225px 15px 255px;
+  --wob2:15px 225px 15px 255px/255px 15px 225px 15px;
+  --wob3:30px 12px 26px 10px/10px 28px 12px 30px;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{background:var(--desk);color:var(--ink);font-family:var(--ui);font-size:17px;display:flex;align-items:center;justify-content:center;
+  background-image:radial-gradient(rgba(31,26,23,.08) 1px,transparent 1.4px);background-size:22px 22px}
+*{box-sizing:border-box}
+button{font-family:inherit;color:inherit}
+:focus-visible{outline:3px dashed var(--ink);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* phone */
+.phone{position:relative;width:100%;height:100%;max-width:440px;overflow:hidden;display:flex;flex-direction:column;
+  background:
+    linear-gradient(to right,transparent 0 30px,var(--margin) 30px 32px,transparent 32px),
+    repeating-linear-gradient(to bottom,transparent 0 31px,var(--line) 31px 32px),
+    var(--paper)}
+@media (min-width:540px) and (min-height:720px){
+  body{padding-block:24px}
+  .phone{width:390px;height:min(844px,100%);border:4px solid var(--ink);border-radius:48px 40px 46px 42px/42px 46px 40px 48px;box-shadow:9px 9px 0 var(--ink)}
+}
+
+/* shared bits */
+.btn{font-family:var(--ui);font-size:20px;line-height:1.1;border:3px solid var(--ink);border-radius:var(--wob);box-shadow:3px 3px 0 var(--ink);
+  background:var(--butter);padding:11px 20px;cursor:pointer;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:3px 3px 0 var(--ink)}
+.btn.ghost{background:var(--white)}
+.btn.pink{background:var(--pink)}
+.card{background:var(--white);border:3px solid var(--ink);border-radius:var(--wob3);box-shadow:4px 4px 0 var(--ink)}
+.doodle{filter:url(#wobble)}
+h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;line-height:1}
+
+/* onboarding */
+#onb{flex:1;overflow-y:auto;padding:24px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+.wordmark{font-family:var(--display);font-weight:700;font-size:24px;display:flex;align-items:center;gap:8px}
+.wordmark svg{width:30px;height:30px}
+.onb-hero{display:flex;align-items:flex-end;gap:12px;padding-left:22px}
+.onb-hero h1{font-size:52px}
+.onb-hero svg{width:96px;flex:none}
+.sub{font-size:19px;color:var(--ink-soft);margin:0;padding-left:22px;line-height:1.3}
+/* picks tray (story-sticker style) */
+.picks{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.slot{display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:none;padding:4px 0 0;position:relative;min-width:0;font-family:var(--ui);color:var(--ink)}
+.slot.filled{cursor:pointer}
+.sc{width:58px;height:58px;max-width:100%;border:3px solid var(--ink);border-radius:50% 46% 52% 48%;overflow:hidden;background:var(--white);display:grid;place-items:center;box-shadow:2px 2px 0 var(--ink)}
+.sc.empty{border-style:dashed;box-shadow:none;background:transparent;font-family:var(--display);font-weight:700;font-size:24px;color:var(--ink-soft)}
+.sc img,.sc svg{width:100%;height:100%;object-fit:cover;display:block}
+.slot .x{position:absolute;top:0;right:calc(50% - 33px);width:22px;height:22px;border-radius:50%;background:var(--pink);border:2px solid var(--ink);font-size:15px;line-height:16px;text-align:center}
+.st{font-size:12px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.2}
+.slot.pop .sc{animation:popin .35s ease-out}
+/* search */
+.searchbox{display:flex;align-items:center;gap:8px;background:var(--white);border:3px solid var(--ink);border-radius:var(--wob);padding:6px 12px;box-shadow:3px 3px 0 var(--ink)}
+.searchbox svg{width:22px;height:22px;flex:none}
+.searchbox input{flex:1;min-width:0;border:0;background:transparent;font-family:var(--ui);font-size:19px;color:var(--ink);padding:4px 0}
+.searchbox input:focus{outline:none}
+.searchbox input::-webkit-search-cancel-button{display:none}
+.clearq{background:var(--paper);border:2px solid var(--ink);border-radius:50%;width:26px;height:26px;cursor:pointer;line-height:1;font-size:16px;flex:none}
+.results-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding-left:22px}
+#resLabel{font-family:var(--display);font-weight:700;font-size:22px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.src{font-size:13px;color:var(--ink-soft);border:1.5px solid var(--ink-soft);border-radius:10px 8px 11px 9px;padding:0 7px;white-space:nowrap}
+.src.live{color:var(--ink);background:var(--meadow);border-color:var(--ink)}
+.results{list-style:none;margin:0;padding:4px 8px;display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:4px;border-bottom:2px dashed rgba(31,26,23,.16)}
+.row:last-child{border-bottom:0}
+.res{flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:0;background:none;text-align:left;padding:8px 4px;cursor:pointer;border-radius:12px;font-family:var(--ui);color:var(--ink)}
+.res:hover{background:var(--paper)}
+.rc{width:48px;height:48px;flex:none;border:2.5px solid var(--ink);border-radius:8px 11px 7px 10px;overflow:hidden;background:var(--paper)}
+.rc img,.rc svg{width:100%;height:100%;display:block;object-fit:cover}
+.rt{flex:1;min-width:0;display:flex;flex-direction:column}
+.rt b{font-weight:400;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rt span{font-size:14px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.add{width:30px;height:30px;flex:none;border:2.5px solid var(--ink);border-radius:50% 46% 52% 48%;display:grid;place-items:center;font-size:19px;line-height:1;background:var(--white)}
+.res.on .add{background:var(--meadow)}
+.pv{width:42px;height:42px;flex:none;border:0;background:none;padding:3px;cursor:pointer}
+.pv svg{width:100%;height:100%;display:block}
+.pv .i-stop{display:none}
+.pv.playing .i-play{display:none}
+.pv.playing .i-stop{display:inline}
+.results .empty{padding:18px 10px;text-align:center;color:var(--ink-soft);font-size:16px}
+.onb-foot{position:sticky;bottom:0;background:var(--paper);padding-block:10px 4px;border-top:2.5px dashed rgba(31,26,23,.25);z-index:2;display:flex;flex-direction:column;gap:8px}
+.onb-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.onb-actions .btn{flex:1 1 140px}
+.hint{font-size:15px;color:var(--ink-soft);text-align:center;margin:0}
+.tagline{font-family:var(--display);font-size:20px;text-align:center;margin:4px 0 0;color:var(--ink-soft)}
+
+/* app shell */
+#app{flex:1;display:flex;flex-direction:column;min-height:0}
+.appbar{display:flex;align-items:center;gap:8px;padding:10px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));position:relative;z-index:20;background:var(--paper);border-bottom:3px solid var(--ink)}
+.appbar .wordmark{margin-right:auto;font-size:22px}
+.debug{font-family:var(--ui);font-size:14px;border:2px dashed var(--ink);background:var(--paper);border-radius:10px 14px 9px 13px;padding:4px 8px;cursor:pointer;display:flex;gap:5px;align-items:center}
+.debug small{font-size:10px;letter-spacing:.08em;background:var(--ink);color:var(--paper);border-radius:4px;padding:1px 4px}
+.iconbtn{width:38px;height:38px;border:3px solid var(--ink);border-radius:50% 45% 52% 46%;background:var(--white);font-size:20px;line-height:1;cursor:pointer;display:grid;place-items:center;box-shadow:2px 2px 0 var(--ink)}
+.menu{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:56px;width:220px;padding:12px;display:flex;flex-direction:column;gap:8px;z-index:30}
+.menu p{margin:0;font-size:14px;color:var(--ink-soft);line-height:1.3}
+.menu .btn{font-size:17px;padding:8px 12px}
+.screens{flex:1;position:relative;min-height:0}
+.screen{position:absolute;inset:0;overflow-y:auto}
+
+/* today */
+#today{padding:16px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+#today[hidden]{display:none!important}
+.dayhead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding-left:22px}
+.dayhead h2{font-size:30px}
+.chip{font-size:15px;border:2.5px solid var(--ink);border-radius:var(--wob);padding:2px 10px;background:var(--sky);white-space:nowrap}
+.notif{display:flex;gap:10px;align-items:center;padding:10px 12px;background:rgba(255,255,255,.92);border:2.5px solid var(--ink);border-radius:18px 14px 20px 12px/12px 20px 14px 18px;box-shadow:3px 3px 0 var(--ink)}
+.notif .ico{width:36px;height:36px;flex:none;background:var(--butter);border:2.5px solid var(--ink);border-radius:10px 12px 9px 13px;display:grid;place-items:center}
+.notif .ico svg{width:22px;height:22px}
+.notif b{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);font-weight:400;display:block}
+.notif span{font-size:17px;line-height:1.2}
+.banner{background:var(--pink);border:2.5px dashed var(--ink);border-radius:var(--wob2);padding:10px 14px;font-size:17px;line-height:1.25}
+.label{font-family:var(--display);font-weight:700;font-size:26px;padding-left:22px;margin-bottom:-4px}
+.song{padding:14px;display:flex;flex-direction:column;gap:12px;position:relative}
+.song-top{display:flex;gap:14px;align-items:center}
+.cover{width:112px;height:112px;flex:none}
+.cover svg{width:100%;height:100%;display:block}
+.song.playing .cover svg{animation:wiggle .7s steps(2) infinite}
+@keyframes wiggle{0%{transform:rotate(-3deg)}100%{transform:rotate(3deg)}}
+.meta{min-width:0;display:flex;flex-direction:column;gap:4px}
+.meta h3{font-size:30px;overflow-wrap:anywhere}
+.meta .artist{font-size:18px;color:var(--ink-soft);overflow-wrap:anywhere}
+.genre{align-self:flex-start;font-size:14px;border:2px solid var(--ink);border-radius:20px 14px 18px 12px;padding:1px 9px;background:var(--paper)}
+.why{display:flex;flex-direction:column;gap:6px;align-items:flex-start;background:var(--paper);border:2px dashed rgba(31,26,23,.45);border-radius:14px 18px 12px 16px;padding:10px 12px}
+.badge{font-size:17px;border:2.5px solid var(--ink);border-radius:var(--wob);padding:3px 12px;box-shadow:2px 2px 0 var(--ink)}
+.badge.gem{background:var(--meadow)}
+.badge.vibe{background:var(--sky)}
+.why-line{font-size:16px;line-height:1.3}
+.chewed{font-size:15px;color:var(--ink-soft);line-height:1.3}
+.player{display:flex;align-items:center;gap:12px;border-top:2.5px solid var(--ink);padding-top:12px}
+.play{width:58px;height:58px;flex:none;border:3px solid var(--ink);border-radius:52% 48% 50% 46%/48% 52% 46% 50%;background:var(--butter);box-shadow:3px 3px 0 var(--ink);cursor:pointer;display:grid;place-items:center}
+.play:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.play svg{width:26px;height:26px}
+.track{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.bar{height:18px;border:3px solid var(--ink);border-radius:12px 8px 14px 9px/9px 14px 8px 12px;background:var(--paper);overflow:hidden;position:relative}
+.bar i{position:absolute;inset:0 auto 0 0;width:0;background:repeating-linear-gradient(-45deg,var(--meadow) 0 8px,var(--meadow-dk) 8px 11px);border-right:2.5px solid var(--ink)}
+.bar i.full{border-right:0}
+.track-row{display:flex;justify-content:space-between;font-size:14px;color:var(--ink-soft);font-variant-numeric:tabular-nums;gap:8px}
+.eq{display:inline-flex;gap:2px;align-items:flex-end;height:12px;margin-right:4px;vertical-align:-1px}
+.eq b{width:3px;background:var(--ink);height:4px;border-radius:1px;animation:eq .5s ease-in-out infinite alternate}
+.eq b:nth-child(2){animation-delay:.15s}.eq b:nth-child(3){animation-delay:.3s}
+@keyframes eq{to{height:12px}}
+.done-pill{color:var(--ink);background:var(--meadow);border:2px solid var(--ink);border-radius:10px 14px 9px 12px;padding:0 7px}
+.feedback{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.fb{font-family:var(--ui);font-size:15px;line-height:1.1;border:2.5px solid var(--ink);background:var(--white);border-radius:var(--wob2);box-shadow:2.5px 2.5px 0 var(--ink);padding:9px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+.fb:nth-child(2){border-radius:var(--wob)}
+.fb .e{font-size:22px}
+.fb[aria-pressed="true"]{background:var(--butter);transform:translate(2px,2px);box-shadow:.5px .5px 0 var(--ink)}
+.fb.key{background:var(--paper)}
+.fb.key[aria-pressed="true"]{background:var(--pink)}
+.after{padding:16px;text-align:center;display:flex;flex-direction:column;gap:6px;background:var(--meadow);transform:rotate(-1deg)}
+.after h3{font-size:30px}
+.after p{margin:0;font-size:17px;line-height:1.3}
+.countdown{font-family:var(--display);font-weight:700;font-size:34px;font-variant-numeric:tabular-nums}
+.after .btn{align-self:center;margin-top:6px;font-size:18px;padding:8px 16px}
+
+/* pasture */
+#pasture{overflow:hidden}
+.field{position:absolute;inset:0;background:linear-gradient(to bottom,var(--sky) 0 70%,var(--meadow) 70%)}
+.field svg.scene{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hud{position:absolute;top:10px;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:6px;z-index:5;pointer-events:none}
+.hud-row{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:16px;background:var(--white);border:2.5px solid var(--ink);border-radius:var(--wob);padding:3px 10px;box-shadow:2px 2px 0 var(--ink);white-space:nowrap;font-variant-numeric:tabular-nums}
+.pill.lv{background:var(--butter)}
+.nextlv{font-size:14px;display:flex;align-items:center;gap:8px;background:rgba(255,248,236,.9);border:2px solid var(--ink);border-radius:12px 16px 10px 14px;padding:3px 10px;align-self:flex-start;max-width:100%}
+.nextlv .mini{width:70px;height:9px;border:2px solid var(--ink);border-radius:6px;overflow:hidden;background:var(--paper);flex:none}
+.nextlv .mini i{display:block;height:100%;background:var(--pink)}
+.caption{position:absolute;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:12px;z-index:5;display:flex;gap:10px;align-items:center;justify-content:space-between;
+  background:var(--paper);border:2.5px solid var(--ink);border-radius:var(--wob2);box-shadow:3px 3px 0 var(--ink);padding:8px 12px}
+.caption p{margin:0;font-size:16px;line-height:1.25;min-width:0}
+.caption .btn{font-size:16px;padding:6px 12px;flex:none}
+.tip{position:absolute;z-index:8;max-width:230px;background:var(--white);border:2.5px solid var(--ink);border-radius:14px 18px 12px 16px;box-shadow:3px 3px 0 var(--ink);padding:8px 11px;font-size:15px;line-height:1.3;pointer-events:none}
+.tip b{font-family:var(--display);font-size:19px}
+.tip span{color:var(--ink-soft)}
+.item{cursor:pointer}
+.cowtap{cursor:pointer}
+.cowtap:focus{outline:none}
+
+/* tab bar */
+/* stats */
+#stats{padding:16px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+#stats[hidden]{display:none!important}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tile{padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+.tile:nth-child(2){border-radius:var(--wob);background:var(--butter)}
+.tile:nth-child(1){background:var(--pink)}
+.tile:nth-child(3){background:var(--sky)}
+.tv{font-family:var(--display);font-weight:700;font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+.tl{font-size:14px;line-height:1.15}
+.lvcard{padding:14px;display:flex;flex-direction:column;gap:10px}
+.lvtop{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.lvtop h3{font-size:28px}
+.lvtop span{font-size:15px;color:var(--ink-soft)}
+.bigbar{height:20px;border:3px solid var(--ink);border-radius:12px 8px 14px 9px/9px 14px 8px 12px;background:var(--paper);overflow:hidden}
+.bigbar i{display:block;height:100%;background:repeating-linear-gradient(-45deg,var(--pink) 0 8px,#EE8FA5 8px 11px);border-right:2.5px solid var(--ink)}
+.ladder{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.ladder li{border:2.5px solid var(--ink);border-radius:var(--wob2);padding:5px 4px;text-align:center;font-size:14px;line-height:1.15;background:var(--paper);opacity:.5}
+.ladder li b{display:block;font-family:var(--display);font-size:18px}
+.ladder li.got{opacity:1;background:var(--white)}
+.ladder li.now{opacity:1;background:var(--butter);box-shadow:2px 2px 0 var(--ink)}
+.diary,.log{list-style:none;margin:0;padding:4px 12px}
+.diary li,.log li{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:2px dashed rgba(31,26,23,.16);min-width:0}
+.diary li:last-child,.log li:last-child{border-bottom:0}
+.diary .em{width:38px;height:38px;flex:none;display:grid;place-items:center;font-size:22px;background:var(--meadow);border:2.5px solid var(--ink);border-radius:50% 45% 52% 48%}
+.dt{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.dt b{font-weight:400;font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dt span{font-size:14px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dnum{font-family:var(--display);font-weight:700;font-size:20px;width:38px;flex:none;text-align:center}
+.stat-chip{font-size:13px;border:2px solid var(--ink);border-radius:10px 13px 9px 12px;padding:0 7px;white-space:nowrap;flex:none}
+.stat-chip.ok{background:var(--meadow)}
+.stat-chip.miss{background:var(--paper);border-style:dashed}
+.stat-chip.today{background:var(--butter)}
+.fbsum{font-size:15px;color:var(--ink-soft);padding-left:22px;margin-top:-8px}
+.empty-note{padding:14px 0;text-align:center;color:var(--ink-soft);font-size:16px;border:0!important}
+.tabbar{display:grid;grid-template-columns:repeat(3,1fr);border-top:3px solid var(--ink);background:var(--paper);padding:6px max(12px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));gap:10px;position:relative;z-index:10}
+.tab{border:0;background:transparent;font-family:var(--display);font-weight:700;font-size:17px;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:0;padding:4px 0;cursor:pointer;border-radius:var(--wob);position:relative}
+.tab svg{width:34px;height:34px}
+.tab[aria-selected="true"]{background:var(--butter);outline:2.5px solid var(--ink);outline-offset:-2px}
+.tab .dot{position:absolute;top:2px;right:calc(50% - 34px);background:var(--pink);border:2px solid var(--ink);border-radius:50%;font-family:var(--ui);font-weight:400;font-size:12px;min-width:24px;height:22px;display:grid;place-items:center;padding:0 3px}
+.tab.wiggle svg{animation:tabw .5s}
+@keyframes tabw{25%{transform:rotate(-14deg) scale(1.15)}75%{transform:rotate(10deg) scale(1.1)}}
+
+/* toast */
+.toast{position:absolute;left:50%;bottom:86px;transform:translate(-50%,20px);opacity:0;z-index:40;background:var(--ink);color:var(--paper);font-size:17px;line-height:1.25;
+  padding:10px 16px;border-radius:var(--wob);width:max-content;max-width:calc(100% - 32px);text-align:center;transition:opacity .2s,transform .2s;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.fly{position:fixed;z-index:50;width:30px;height:30px;pointer-events:none;margin:-15px 0 0 -15px}
+
+/* scene: levels */
+.lvl2,.lvl3,.lvl4{display:none}
+#scene[data-lv="2"] .lvl2,#scene[data-lv="3"] .lvl2,#scene[data-lv="3"] .lvl3,#scene[data-lv="4"] .lvl2,#scene[data-lv="4"] .lvl3,#scene[data-lv="4"] .lvl4{display:inline}
+/* cow animation */
+.cow .body{transform-box:fill-box;transform-origin:50% 100%;animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.015,1.045)}}
+.tail{transform-box:fill-box;transform-origin:100% 0;animation:swish 2.2s ease-in-out infinite}
+@keyframes swish{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(16deg)}}
+.lid{transform-box:fill-box;transform-origin:50% 0;transform:scaleY(0);animation:blink 4.6s infinite}
+@keyframes blink{0%,91%,100%{transform:scaleY(0)}95%{transform:scaleY(1)}}
+.cow-anim{transition:transform .5s}
+#scene.mood-happy .cow-anim{animation:bounce .9s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+#scene.mood-bored .cow-anim{transform:translateY(36px)}
+#scene.mood-bored .legs{transform-box:fill-box;transform-origin:50% 0;transform:scaleY(.22)}
+#scene.mood-bored .lid{animation:none;transform:scaleY(.6)}
+#scene.mood-bored .tail{animation-duration:7s}
+.yawn{display:none}
+#scene.mood-bored .yawn{display:inline}
+#scene.mood-bored .smile{display:none}
+#scene.mood-waiting .head{transform-box:fill-box;transform-origin:50% 100%;animation:look 3s ease-in-out infinite}
+@keyframes look{0%,100%{transform:rotate(0)}50%{transform:rotate(-6deg)}}
+.hop{animation:hop .5s ease-out}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-28px)}}
+#hearts{display:none}
+#scene.mood-happy #hearts{display:inline}
+.heart{transform-box:fill-box;transform-origin:50% 100%;opacity:0;animation:floatUp 2.4s ease-out infinite}
+.heart:nth-child(2){animation-delay:.8s}.heart:nth-child(3){animation-delay:1.6s}
+@keyframes floatUp{0%{opacity:0;transform:translateY(0) scale(.6)}20%{opacity:1}100%{opacity:0;transform:translateY(-44px) scale(1)}}
+#bubble{transition:opacity .2s}
+.pop-in{transform-box:fill-box;transform-origin:50% 100%;animation:popin .35s ease-out}
+@keyframes popin{0%{transform:scale(.3)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.firefly{animation:glow 2.6s ease-in-out infinite}
+.firefly:nth-child(2n){animation-delay:.9s}.firefly:nth-child(3n){animation-delay:1.7s}
+@keyframes glow{0%,100%{opacity:.15}50%{opacity:1}}
+.flame{transform-box:fill-box;transform-origin:50% 100%;animation:flicker .45s steps(2) infinite}
+@keyframes flicker{0%{transform:scale(1,1)}100%{transform:scale(.92,1.12)}}
+.cloud{animation:drift 9s ease-in-out infinite alternate}
+.cloud.b{animation-duration:13s}
+@keyframes drift{to{transform:translateX(16px)}}
+.record{transform-box:fill-box;transform-origin:50% 50%;animation:spin 1.6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.bulb{animation:glow 1.8s ease-in-out infinite}
+.bulb:nth-child(odd){animation-delay:.9s}
+.pop{transform-box:fill-box;transform-origin:50% 100%;animation:pop .7s ease-out}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .firefly,.bulb{opacity:.8}
+}
+</style>
+</head>
+<body>
+<!-- shared SVG filter for the hand-drawn "boil" -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="wobble" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence id="turb" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="1" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="phone" id="phone">
+
+  <!-- ONBOARDING -->
+  <section id="onb" aria-labelledby="onbTitle">
+    <div class="wordmark"><svg viewBox="0 0 40 40" class="doodle" aria-hidden="true"><path d="M20,4 C20,4 7,19 7,26 a13,13 0 0 0 26,0 C33,19 20,4 20,4z" fill="#FFFFFF" stroke="#1F1A17" stroke-width="3.5"/><path d="M17,30 v-10 l8,-2 v9" fill="none" stroke="#1F1A17" stroke-width="2.6" stroke-linecap="round"/><circle cx="15.5" cy="30" r="2.6" fill="#1F1A17"/><circle cx="23.5" cy="27.5" r="2.6" fill="#1F1A17"/></svg>Udderground</div>
+    <div class="onb-hero">
+      <h1 id="onbTitle">Feed the cow.</h1>
+      <svg viewBox="0 0 120 110" class="doodle" aria-hidden="true">
+        <ellipse cx="22" cy="40" rx="18" ry="9" transform="rotate(-25 22 40)" fill="#FFFFFF" stroke="#1F1A17" stroke-width="4"/>
+        <ellipse cx="98" cy="40" rx="18" ry="9" transform="rotate(25 98 40)" fill="#FFFFFF" stroke="#1F1A17" stroke-width="4"/>
+        <ellipse cx="60" cy="56" rx="38" ry="40" fill="#FFFFFF" stroke="#1F1A17" stroke-width="4.5"/>
+        <path d="M30,34 q10,-14 26,-8 q2,14 -12,18 q-14,2 -14,-10z" fill="#1F1A17"/>
+        <circle cx="46" cy="50" r="5.5" fill="#1F1A17"/><circle cx="74" cy="50" r="5.5" fill="#1F1A17"/>
+        <circle cx="47.5" cy="48" r="1.8" fill="#FFFFFF"/><circle cx="75.5" cy="48" r="1.8" fill="#FFFFFF"/>
+        <ellipse cx="60" cy="78" rx="30" ry="18" fill="#F6A6B8" stroke="#1F1A17" stroke-width="4"/>
+        <ellipse cx="50" cy="76" rx="4" ry="5" fill="#1F1A17"/><ellipse cx="70" cy="76" rx="4" ry="5" fill="#1F1A17"/>
+        <path d="M52,87 q8,6 16,0" fill="none" stroke="#1F1A17" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <p class="sub">Tell her 5 songs you're into lately. She'll chew on them and bring you something new every morning.</p>
+    <div class="picks" id="picks" role="group" aria-label="Your 5 picks"></div>
+    <div class="searchbox">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6.5" fill="none" stroke="#1F1A17" stroke-width="2.8"/><path d="M15,15 L21,21" stroke="#1F1A17" stroke-width="3" stroke-linecap="round"/></svg>
+      <label class="sr" for="q">Search music</label>
+      <input id="q" type="search" placeholder="Search songs or artists" autocomplete="off" spellcheck="false" enterkeyhint="search">
+      <button class="clearq" id="clearQ" type="button" aria-label="Clear search" hidden>×</button>
+    </div>
+    <div class="results-head"><span id="resLabel">Popular right now</span><span class="src" id="srcLabel">loading…</span></div>
+    <ul class="results card" id="results" aria-live="polite"></ul>
+    <div class="onb-foot">
+      <p class="hint" id="onbHint">0/5 picked. Tap a song to add it.</p>
+      <div class="onb-actions">
+        <button class="btn ghost" id="fillBtn" type="button">Fill with examples</button>
+        <button class="btn" id="startBtn" type="button" disabled>Start grazing</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- APP -->
+  <div id="app" hidden>
+    <header class="appbar">
+      <div class="wordmark"><svg viewBox="0 0 40 40" class="doodle" aria-hidden="true"><path d="M20,4 C20,4 7,19 7,26 a13,13 0 0 0 26,0 C33,19 20,4 20,4z" fill="#FFFFFF" stroke="#1F1A17" stroke-width="3.5"/><path d="M17,30 v-10 l8,-2 v9" fill="none" stroke="#1F1A17" stroke-width="2.6" stroke-linecap="round"/><circle cx="15.5" cy="30" r="2.6" fill="#1F1A17"/><circle cx="23.5" cy="27.5" r="2.6" fill="#1F1A17"/></svg>Udderground</div>
+      <button class="debug" id="nextDayBtn" type="button" title="Demo only: jump to the next day">⏭ Next day <small>DEMO</small></button>
+      <button class="iconbtn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu">⋯</button>
+      <div class="menu card" id="menu" hidden>
+        <p>This is a clickable demo. Your progress is saved in this browser.</p>
+        <button class="btn pink" id="resetBtn" type="button">Reset demo</button>
+      </div>
+    </header>
+
+    <main class="screens">
+      <!-- TODAY -->
+      <section class="screen" id="today" role="tabpanel" aria-labelledby="tabToday">
+        <div class="dayhead"><h2 id="dateLabel">Friday, Oct 30</h2><span class="chip" id="dayChip">Day 1</span></div>
+        <div class="notif">
+          <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12,2 C12,2 4,12 4,16.5 a8,8 0 0 0 16,0 C20,12 12,2 12,2z" fill="#FFFFFF" stroke="#1F1A17" stroke-width="2.4"/></svg></div>
+          <div><b>Udderground · 7:30</b><span>🥛 Morning milking! Your fresh track is ready.</span></div>
+        </div>
+        <div class="banner" id="missedBanner" hidden>She missed you. No worries, the pasture is still here.</div>
+        <div class="label">Today's Moo</div>
+        <article class="card song" id="songCard">
+          <div class="song-top">
+            <div class="cover doodle" id="cover"></div>
+            <div class="meta">
+              <h3 id="sTitle">Paper Lanterns</h3>
+              <span class="artist" id="sArtist">Mirelle &amp; The Quiet Hours</span>
+              <span class="genre" id="sGenre">Dream pop</span>
+            </div>
+          </div>
+          <div class="why" id="why"></div>
+          <div class="chewed" id="chewed"></div>
+          <div class="player">
+            <button class="play" id="playBtn" type="button" aria-label="Play"></button>
+            <div class="track">
+              <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+              <div class="track-row"><span id="pStatus">30-second preview</span><span id="pTime">0:00 / 0:30</span></div>
+            </div>
+          </div>
+        </article>
+        <div class="feedback" role="group" aria-label="What did you think?">
+          <button class="fb" type="button" data-fb="love" aria-pressed="false"><span class="e">❤️</span>Love it</button>
+          <button class="fb" type="button" data-fb="nope" aria-pressed="false"><span class="e">👎</span>Not for me</button>
+          <button class="fb key" type="button" data-fb="knew" aria-pressed="false"><span class="e">🙈</span>Already knew it</button>
+        </div>
+        <div class="card after" id="after" hidden>
+          <h3>Udderly fresh. See you tomorrow.</h3>
+          <p>Come back tomorrow at 7:30 for your next track.</p>
+          <div class="countdown" id="countdown">--</div>
+          <button class="btn ghost" id="seeCow" type="button">Visit the pasture</button>
+        </div>
+      </section>
+
+      <!-- PASTURE -->
+      <section class="screen" id="pasture" role="tabpanel" aria-labelledby="tabPasture" hidden>
+        <div class="field" id="field">
+
+          <svg class="scene" id="scene" viewBox="0 0 390 600" preserveAspectRatio="xMidYMax meet" data-lv="1" aria-label="Your pasture">
+            <g filter="url(#wobble)" stroke="#1F1A17" stroke-linejoin="round" stroke-linecap="round">
+              <rect x="-200" y="-400" width="790" height="1000" fill="#A8D8F0" stroke="none"/>
+              <!-- sun -->
+              <g stroke-width="4">
+                <path d="M60,22 v-12 M60,118 v12 M12,70 h-12 M108,70 h12 M26,36 l-9,-9 M94,104 l9,9 M94,36 l9,-9 M26,104 l-9,9" fill="none"/>
+                <circle cx="60" cy="70" r="30" fill="#FFD966"/>
+              </g>
+              <!-- clouds (lv3) -->
+              <g class="lvl3" stroke-width="3.5" fill="#FFFFFF">
+                <path class="cloud" d="M200,110 q-4,-22 20,-22 q8,-20 32,-10 q22,-8 28,14 q20,2 16,18 z"/>
+                <path class="cloud b" d="M90,165 q-2,-16 16,-16 q8,-16 26,-6 q18,-4 20,12 q14,2 10,10 z"/>
+              </g>
+              <!-- genre: lanterns (sky garland) -->
+              <g class="item" id="item-lanterns" data-key="lanterns" hidden>
+                <path d="M228,36 Q305,78 388,50" fill="none" stroke-width="2.5"/>
+                <g stroke-width="2.5">
+                  <path d="M262,52 v8 M302,62 v8 M346,60 v8" fill="none"/>
+                  <rect x="250" y="60" width="24" height="30" rx="10" fill="#F6A6B8"/>
+                  <rect x="290" y="70" width="24" height="30" rx="10" fill="#FFD966"/>
+                  <rect x="334" y="68" width="24" height="30" rx="10" fill="#F6A6B8"/>
+                  <path d="M256,66 v18 M268,66 v18 M296,76 v18 M308,76 v18 M340,74 v18 M352,74 v18" fill="none" stroke-width="1.5"/>
+                </g>
+              </g>
+              <!-- genre: fireflies -->
+              <g class="item" id="item-fireflies" data-key="fireflies" hidden stroke="none">
+                <rect x="70" y="190" width="300" height="130" fill="transparent"/>
+                <g fill="#FFD966">
+                  <g class="firefly"><circle cx="150" cy="250" r="11" opacity=".35"/><circle cx="150" cy="250" r="4.5" fill="#FFF8EC"/></g>
+                  <g class="firefly"><circle cx="232" cy="212" r="11" opacity=".35"/><circle cx="232" cy="212" r="4.5" fill="#FFF8EC"/></g>
+                  <g class="firefly"><circle cx="305" cy="262" r="11" opacity=".35"/><circle cx="305" cy="262" r="4.5" fill="#FFF8EC"/></g>
+                  <g class="firefly"><circle cx="96" cy="300" r="11" opacity=".35"/><circle cx="96" cy="300" r="4.5" fill="#FFF8EC"/></g>
+                  <g class="firefly"><circle cx="352" cy="214" r="11" opacity=".35"/><circle cx="352" cy="214" r="4.5" fill="#FFF8EC"/></g>
+                  <g class="firefly"><circle cx="190" cy="292" r="11" opacity=".35"/><circle cx="190" cy="292" r="4.5" fill="#FFF8EC"/></g>
+                </g>
+              </g>
+              <!-- back hill -->
+              <path d="M-200,352 L0,350 Q100,306 205,338 T390,326 L590,330 V600 H-200 Z" fill="#6FAE52" stroke-width="4"/>
+              <!-- stage + string lights (lv4) -->
+              <g class="lvl4">
+                <g stroke-width="3.5">
+                  <rect x="262" y="262" width="9" height="74" fill="#C98B55"/>
+                  <rect x="378" y="258" width="9" height="78" fill="#C98B55"/>
+                  <rect x="252" y="330" width="146" height="24" fill="#C98B55"/>
+                  <path d="M285,330 v24 M318,330 v24 M351,330 v24" fill="none" stroke-width="2"/>
+                  <path d="M272,300 h106" fill="none" stroke-width="2.5"/>
+                  <path d="M294,300 l-10,30 M356,300 l10,30" fill="none" stroke-width="2.5"/>
+                </g>
+                <path d="M50,250 Q160,300 266,272 Q325,295 384,268" fill="none" stroke-width="2.5"/>
+                <g id="bulbs" stroke-width="2"></g>
+              </g>
+              <!-- tree (lv3) -->
+              <g class="lvl3" stroke-width="4">
+                <path d="M42,390 L46,280 Q38,262 30,256 M60,282 Q70,264 82,260 M46,280 L66,280 L64,390 Z" fill="#C98B55"/>
+                <circle cx="34" cy="250" r="38" fill="#6FAE52"/>
+                <circle cx="82" cy="240" r="36" fill="#6FAE52"/>
+                <circle cx="56" cy="205" r="36" fill="#6FAE52"/>
+                <g stroke="none" fill="#6FAE52"><circle cx="34" cy="250" r="33"/><circle cx="82" cy="240" r="31"/><circle cx="56" cy="205" r="31"/><circle cx="58" cy="238" r="28"/></g>
+                <g fill="#F6A6B8" stroke-width="2.5"><circle cx="30" cy="236" r="5"/><circle cx="76" cy="220" r="5"/><circle cx="58" cy="262" r="5"/><circle cx="92" cy="252" r="5"/></g>
+              </g>
+              <!-- fence (lv2) -->
+              <g class="lvl2" fill="#F1D3A6" stroke-width="3">
+                <path d="M150,356 L305,352 L305,362 L150,366 Z M150,376 L305,372 L305,382 L150,386 Z"/>
+                <path d="M156,344 l6,-6 l6,6 v52 h-12 z M194,342 l6,-6 l6,6 v52 h-12 z M232,341 l6,-6 l6,6 v52 h-12 z M270,340 l6,-6 l6,6 v52 h-12 z"/>
+              </g>
+              <!-- front ground -->
+              <path d="M-200,384 L0,382 Q120,358 222,374 T390,368 L590,372 V640 H-200 Z" fill="#9BD17A" stroke-width="4"/>
+              <!-- grass + flowers (generated) -->
+              <g id="tufts" fill="none" stroke-width="3"></g>
+              <g id="flowers" class="lvl2"></g>
+
+              <!-- genre: saxophone -->
+              <g class="item" id="item-saxophone" data-key="saxophone" hidden transform="rotate(-14 104 402)">
+                <path d="M100,318 L100,382 Q100,408 118,402 L126,378" fill="none" stroke-width="14"/>
+                <path d="M100,318 L100,382 Q100,408 118,402 L126,378" fill="none" stroke="#FFD966" stroke-width="7.5"/>
+                <ellipse cx="128" cy="374" rx="10" ry="6" fill="#FFD966" stroke-width="3"/>
+                <path d="M100,318 l-7,-8" fill="none" stroke-width="4"/>
+                <g fill="#1F1A17" stroke="none"><circle cx="100" cy="338" r="2.2"/><circle cx="100" cy="352" r="2.2"/><circle cx="100" cy="366" r="2.2"/></g>
+              </g>
+              <!-- genre: banjo -->
+              <g class="item" id="item-banjo" data-key="banjo" hidden>
+                <path d="M362,392 L384,322" fill="none" stroke-width="10"/>
+                <path d="M362,392 L384,322" fill="none" stroke="#C98B55" stroke-width="5"/>
+                <rect x="378" y="310" width="12" height="16" rx="3" fill="#C98B55" stroke-width="3" transform="rotate(18 384 318)"/>
+                <circle cx="358" cy="404" r="18" fill="#FFF8EC" stroke-width="3.5"/>
+                <circle cx="358" cy="404" r="11" fill="none" stroke-width="2"/>
+              </g>
+              <!-- genre: crooked sign -->
+              <g class="item" id="item-sign" data-key="sign" hidden>
+                <path d="M30,520 L34,470" fill="none" stroke="#1F1A17" stroke-width="10"/>
+                <path d="M30,520 L34,470" fill="none" stroke="#C98B55" stroke-width="5"/>
+                <g transform="rotate(-10 40 460)">
+                  <rect x="2" y="446" width="80" height="28" fill="#FFD966" stroke-width="3"/>
+                  <text x="42" y="466" text-anchor="middle" font-family="Gaegu, 'Patrick Hand', cursive" font-weight="700" font-size="16" fill="#1F1A17" stroke="none">MOOSH PIT</text>
+                </g>
+              </g>
+              <!-- turntable (lv4) -->
+              <g class="lvl4" stroke-width="3">
+                <path d="M312,512 v8 M376,512 v8" fill="none" stroke-width="4"/>
+                <rect x="302" y="470" width="84" height="44" rx="6" fill="#FFD966"/>
+                <g class="record"><circle cx="334" cy="492" r="17" fill="#1F1A17"/><path d="M322,484 a14,14 0 0 1 10,-6" fill="none" stroke="#FFF8EC" stroke-width="2"/><circle cx="334" cy="492" r="5" fill="#F6A6B8" stroke-width="2"/></g>
+                <path d="M374,476 L368,496 L352,500" fill="none" stroke-width="3"/>
+                <circle cx="374" cy="478" r="3.5" fill="#FFF8EC"/>
+              </g>
+
+              <!-- THE COW -->
+              <g id="cowWrap" transform="translate(185,440) scale(1)">
+                <g id="cowHop">
+                  <g class="cow cow-anim cowtap" id="cowTap" tabindex="0" role="button" aria-label="Pet the cow">
+                    <ellipse cx="12" cy="80" rx="96" ry="10" fill="#1F1A17" opacity=".14" stroke="none"/>
+                    <g class="tail">
+                      <path d="M-66,-12 C-90,-6 -98,18 -94,38" fill="none" stroke-width="5"/>
+                      <path d="M-94,36 c-9,3 -10,17 0,18 c9,-1 8,-15 0,-18z" fill="#1F1A17" stroke-width="2"/>
+                    </g>
+                    <g class="legs" stroke-width="4">
+                      <rect x="-54" y="18" width="19" height="60" rx="8" fill="#FFFFFF"/>
+                      <rect x="-26" y="22" width="19" height="56" rx="8" fill="#FFFFFF"/>
+                      <rect x="20" y="22" width="19" height="56" rx="8" fill="#FFFFFF"/>
+                      <rect x="46" y="18" width="19" height="60" rx="8" fill="#FFFFFF"/>
+                      <g fill="#1F1A17"><rect x="-54" y="66" width="19" height="12" rx="4"/><rect x="-26" y="66" width="19" height="12" rx="4"/><rect x="20" y="66" width="19" height="12" rx="4"/><rect x="46" y="66" width="19" height="12" rx="4"/></g>
+                    </g>
+                    <g class="body">
+                      <path d="M-2,40 q14,26 30,0" fill="#F6A6B8" stroke-width="4"/>
+                      <path d="M6,52 v6 M14,56 v6 M22,52 v6" fill="none" stroke-width="3.5"/>
+                      <ellipse cx="0" cy="0" rx="72" ry="46" fill="#FFFFFF" stroke-width="5"/>
+                      <g fill="#1F1A17" stroke="none">
+                        <path d="M-44,-34 q16,-12 30,0 q8,15 -6,23 q-20,6 -24,-23z"/>
+                        <path d="M12,-12 q18,-10 32,4 q6,18 -12,20 q-24,0 -20,-24z"/>
+                        <path d="M-62,6 q8,-6 14,4 q2,12 -10,10 q-8,-2 -4,-14z"/>
+                        <path d="M-20,20 q10,-4 14,4 q0,10 -10,8 q-8,-2 -4,-12z"/>
+                      </g>
+                    </g>
+                    <!-- cowbell lv2 -->
+                    <g class="lvl2">
+                      <path d="M46,-4 Q62,14 80,2" fill="none" stroke="#F6A6B8" stroke-width="5"/>
+                      <path d="M46,-4 Q62,14 80,2" fill="none" stroke-width="1.6"/>
+                      <path d="M56,12 h14 l5,17 h-24 z" fill="#FFD966" stroke-width="3.5"/>
+                      <circle cx="63" cy="31" r="3" fill="#1F1A17" stroke="none"/>
+                    </g>
+                    <g class="head" transform="translate(82,-30)">
+                      <g stroke-width="4">
+                        <ellipse cx="-34" cy="-20" rx="18" ry="9" transform="rotate(-24 -34 -20)" fill="#FFFFFF"/>
+                        <ellipse cx="34" cy="-20" rx="18" ry="9" transform="rotate(24 34 -20)" fill="#FFFFFF"/>
+                        <ellipse cx="-36" cy="-20" rx="9" ry="4" transform="rotate(-24 -36 -20)" fill="#F6A6B8" stroke="none"/>
+                        <ellipse cx="36" cy="-20" rx="9" ry="4" transform="rotate(24 36 -20)" fill="#F6A6B8" stroke="none"/>
+                      </g>
+                      <g class="lvl3" stroke-width="3"><path d="M-16,-30 q-6,-14 2,-18 q2,8 6,14z M16,-30 q6,-14 -2,-18 q-2,8 -6,14z" fill="#FFD966"/></g>
+                      <ellipse cx="0" cy="0" rx="35" ry="37" fill="#FFFFFF" stroke-width="5"/>
+                      <path d="M-26,-22 q8,-12 22,-8 q2,12 -10,16 q-12,2 -12,-8z" fill="#1F1A17" stroke="none"/>
+                      <g stroke="none">
+                        <circle cx="-13" cy="-4" r="5.5" fill="#1F1A17"/><circle cx="13" cy="-4" r="5.5" fill="#1F1A17"/>
+                        <circle cx="-11.5" cy="-6" r="1.8" fill="#FFFFFF"/><circle cx="14.5" cy="-6" r="1.8" fill="#FFFFFF"/>
+                        <ellipse class="lid" cx="-13" cy="-4" rx="7.5" ry="7.5" fill="#FFFFFF"/>
+                        <ellipse class="lid" cx="13" cy="-4" rx="7.5" ry="7.5" fill="#FFFFFF"/>
+                        <circle cx="-25" cy="8" r="4.5" fill="#F6A6B8"/><circle cx="25" cy="8" r="4.5" fill="#F6A6B8"/>
+                      </g>
+                      <ellipse cx="0" cy="20" rx="27" ry="16" fill="#F6A6B8" stroke-width="4"/>
+                      <ellipse cx="-9" cy="18" rx="3.5" ry="4.5" fill="#1F1A17" stroke="none"/>
+                      <ellipse cx="9" cy="18" rx="3.5" ry="4.5" fill="#1F1A17" stroke="none"/>
+                      <path class="smile" d="M-7,28 q7,5 14,0" fill="none" stroke-width="3"/>
+                      <ellipse class="yawn" cx="0" cy="29" rx="6" ry="4.5" fill="#1F1A17" stroke="none"/>
+                      <!-- headphones lv3 -->
+                      <g class="lvl3">
+                        <path d="M-38,-2 Q-40,-56 0,-54 Q40,-56 38,-2" fill="none" stroke-width="6"/>
+                        <rect x="-48" y="-14" width="15" height="26" rx="6" fill="#F6A6B8" stroke-width="3.5"/>
+                        <rect x="33" y="-14" width="15" height="26" rx="6" fill="#F6A6B8" stroke-width="3.5"/>
+                      </g>
+                    </g>
+                    <!-- guitar lv4 -->
+                    <g class="lvl4" transform="translate(-34,14) rotate(-26)" stroke-width="3.5">
+                      <rect x="34" y="-4.5" width="62" height="9" fill="#C98B55"/>
+                      <rect x="94" y="-8" width="15" height="16" rx="3" fill="#C98B55"/>
+                      <path d="M-24,0 a22,20 0 0 1 36,-14 a16,14 0 0 1 26,14 a16,14 0 0 1 -26,14 a22,20 0 0 1 -36,-14z" fill="#FFD966"/>
+                      <circle cx="18" cy="0" r="6" fill="#1F1A17" stroke="none"/>
+                      <path d="M-14,-4 v8" fill="none" stroke-width="3"/>
+                    </g>
+                  </g>
+                </g>
+              </g>
+
+              <!-- bottom row genre items -->
+              <g class="item" id="item-drum" data-key="drum" hidden stroke-width="3">
+                <path d="M22,532 Q24,552 37,558 L35,584 H57 L55,558 Q68,552 70,532 Z" fill="#E0985C"/>
+                <path d="M26,540 l8,10 l8,-10 l8,10 l8,-10 l8,10" fill="none" stroke-width="2"/>
+                <ellipse cx="46" cy="532" rx="24" ry="7" fill="#FFF8EC"/>
+              </g>
+              <g class="item" id="item-boombox" data-key="boombox" hidden stroke-width="3">
+                <path d="M94,560 q20,-16 40,0" fill="none" stroke-width="4"/>
+                <rect x="82" y="560" width="66" height="34" rx="6" fill="#A8D8F0"/>
+                <circle cx="99" cy="578" r="9" fill="#FFF8EC"/><circle cx="131" cy="578" r="9" fill="#FFF8EC"/>
+                <circle cx="99" cy="578" r="3" fill="#1F1A17" stroke="none"/><circle cx="131" cy="578" r="3" fill="#1F1A17" stroke="none"/>
+                <rect x="109" y="566" width="12" height="6" fill="#FFD966" stroke-width="2"/>
+              </g>
+              <g class="item" id="item-maracas" data-key="maracas" hidden stroke-width="3">
+                <path d="M186,580 L197,596 M212,580 L199,596" fill="none" stroke-width="5"/>
+                <ellipse cx="180" cy="568" rx="10" ry="13" transform="rotate(-28 180 568)" fill="#F6A6B8"/>
+                <ellipse cx="218" cy="568" rx="10" ry="13" transform="rotate(28 218 568)" fill="#FFD966"/>
+                <path d="M174,566 l6,4 M214,566 l6,-2" fill="none" stroke-width="2"/>
+              </g>
+              <g class="item" id="item-cassette" data-key="cassette" hidden stroke-width="3">
+                <rect x="232" y="558" width="56" height="34" rx="4" fill="#F6A6B8"/>
+                <rect x="238" y="563" width="44" height="11" fill="#FFF8EC" stroke-width="2"/>
+                <circle cx="249" cy="582" r="5" fill="#FFF8EC" stroke-width="2.5"/><circle cx="271" cy="582" r="5" fill="#FFF8EC" stroke-width="2.5"/>
+              </g>
+              <g class="item" id="item-campfire" data-key="campfire" hidden stroke-width="3">
+                <path class="flame" d="M332,560 q-18,-12 -6,-30 q2,10 8,10 q-4,-16 10,-26 q-2,14 8,22 q10,12 -4,24 z" fill="#FFB36B"/>
+                <path class="flame" d="M336,560 q-8,-6 -2,-16 q2,6 6,6 q0,-8 6,-12 q0,8 4,12 q4,8 -6,10 z" fill="#FFD966" stroke-width="2"/>
+                <rect x="310" y="558" width="56" height="10" rx="5" fill="#C98B55" transform="rotate(10 338 563)"/>
+                <rect x="310" y="558" width="56" height="10" rx="5" fill="#A87146" transform="rotate(-10 338 563)"/>
+              </g>
+
+              <!-- hearts (happy) -->
+              <g id="hearts" stroke-width="2">
+                <path class="heart" d="M0,4 C0,-2 8,-2 8,4 C8,-2 16,-2 16,4 C16,10 8,14 8,18 C8,14 0,10 0,4Z" fill="#F6A6B8" transform="translate(-26,0)"/>
+                <path class="heart" d="M0,4 C0,-2 8,-2 8,4 C8,-2 16,-2 16,4 C16,10 8,14 8,18 C8,14 0,10 0,4Z" fill="#F6A6B8" transform="translate(4,-14)"/>
+                <path class="heart" d="M0,4 C0,-2 8,-2 8,4 C8,-2 16,-2 16,4 C16,10 8,14 8,18 C8,14 0,10 0,4Z" fill="#F6A6B8" transform="translate(30,2)"/>
+              </g>
+              <!-- speech bubble -->
+              <g id="bubble" transform="translate(270,330)">
+                <path d="M-6,0 C-8,-28 10,-40 44,-40 C80,-40 96,-28 94,-8 C92,10 74,14 46,13 C34,13 26,13 18,12 L2,26 L6,10 C-2,8 -5,5 -6,0 Z" fill="#FFFFFF" stroke-width="3.5"/>
+                <text id="bubbleText" x="44" y="-6" text-anchor="middle" font-family="Gaegu, 'Patrick Hand', cursive" font-weight="700" font-size="26" fill="#1F1A17" stroke="none">♪</text>
+              </g>
+            </g>
+          </svg>
+
+          <div class="tip" id="tip" hidden></div>
+        </div>
+      </section>
+
+      <!-- STATS -->
+      <section class="screen" id="stats" role="tabpanel" aria-labelledby="tabStats" hidden>
+        <div class="label">Your stats</div>
+        <div class="tiles">
+          <div class="tile card"><span class="tv" id="stStreak">0</span><span class="tl">🔥 day streak</span></div>
+          <div class="tile card"><span class="tv" id="stMilk">0</span><span class="tl">🥛 milk</span></div>
+          <div class="tile card"><span class="tv" id="stDays">0</span><span class="tl">🎧 tracks heard</span></div>
+        </div>
+        <div class="card lvcard">
+          <div class="lvtop"><h3 id="stLevel">Lv 1 · Calf</h3><span id="stNext">3 tracks to Heifer</span></div>
+          <div class="bigbar" aria-hidden="true"><i id="stBar"></i></div>
+          <ol class="ladder" id="ladder"></ol>
+        </div>
+        <div class="label">Musical diary</div>
+        <ul class="card diary" id="diary"></ul>
+        <div class="label">Track log</div>
+        <div class="fbsum" id="fbsum"></div>
+        <ul class="card log" id="log"></ul>
+      </section>
+    </main>
+
+    <nav class="tabbar" role="tablist" aria-label="Sections">
+      <button class="tab" role="tab" id="tabToday" aria-controls="today" aria-selected="true" data-tab="today">
+        <svg viewBox="0 0 40 40" class="doodle" aria-hidden="true"><path d="M20,4 C20,4 7,19 7,26 a13,13 0 0 0 26,0 C33,19 20,4 20,4z" fill="#FFFFFF" stroke="#1F1A17" stroke-width="3.5"/><path d="M17,30 v-10 l8,-2 v9" fill="none" stroke="#1F1A17" stroke-width="2.6" stroke-linecap="round"/><circle cx="15.5" cy="30" r="2.6" fill="#1F1A17"/><circle cx="23.5" cy="27.5" r="2.6" fill="#1F1A17"/></svg>
+        Today's Moo
+      </button>
+      <button class="tab" role="tab" id="tabPasture" aria-controls="pasture" aria-selected="false" data-tab="pasture">
+        <svg viewBox="0 0 40 40" class="doodle" aria-hidden="true" id="pastureIcon"><ellipse cx="8" cy="14" rx="7" ry="3.5" transform="rotate(-25 8 14)" fill="#FFFFFF" stroke="#1F1A17" stroke-width="2.6"/><ellipse cx="32" cy="14" rx="7" ry="3.5" transform="rotate(25 32 14)" fill="#FFFFFF" stroke="#1F1A17" stroke-width="2.6"/><ellipse cx="20" cy="20" rx="13" ry="14" fill="#FFFFFF" stroke="#1F1A17" stroke-width="3"/><path d="M10,12 q4,-5 9,-3 q0,5 -4,6 q-5,1 -5,-3z" fill="#1F1A17"/><circle cx="15" cy="18" r="2" fill="#1F1A17"/><circle cx="25" cy="18" r="2" fill="#1F1A17"/><ellipse cx="20" cy="28" rx="10" ry="6" fill="#F6A6B8" stroke="#1F1A17" stroke-width="2.6"/><circle cx="16.5" cy="27.5" r="1.5" fill="#1F1A17"/><circle cx="23.5" cy="27.5" r="1.5" fill="#1F1A17"/></svg>
+        The Pasture
+        <span class="dot" id="tabDot" hidden>+1</span>
+      </button>
+      <button class="tab" role="tab" id="tabStats" aria-controls="stats" aria-selected="false" data-tab="stats">
+        <svg viewBox="0 0 40 40" class="doodle" aria-hidden="true"><rect x="5" y="6" width="30" height="29" rx="4" fill="#FFFFFF" stroke="#1F1A17" stroke-width="3"/><rect x="10" y="22" width="5" height="8" fill="#F6A6B8" stroke="#1F1A17" stroke-width="2.2"/><rect x="17.5" y="15" width="5" height="15" fill="#FFD966" stroke="#1F1A17" stroke-width="2.2"/><rect x="25" y="11" width="5" height="19" fill="#9BD17A" stroke="#1F1A17" stroke-width="2.2"/></svg>
+        Stats
+      </button>
+    </nav>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const KEY='udderground-demo-v1';
+const INK='#1F1A17';
+const PAL=['#F6A6B8','#FFD966','#9BD17A','#A8D8F0','#FFB38A','#C9B8F0','#FFF8EC'];
+
+const SUGG=[
+ {title:"Paper Lanterns",artist:"Mirelle & The Quiet Hours",genre:"Dream pop",type:"hidden_gem",listeners:"12K",reason:"Close to your indie picks, from a tiny band",color:"#F6A6B8",item:"lanterns"},
+ {title:"Salt Road",artist:"Kaito Brandt",genre:"Afrobeat",type:"same_vibe",vibe:"118 BPM · warm · groovy",reason:"Big name in a world you haven't visited yet",color:"#FFD966",item:"drum"},
+ {title:"Low Tide Letters",artist:"Oona Feld",genre:"Folk",type:"hidden_gem",listeners:"8.4K",reason:"Soft vocals like your favorites, recorded in a barn",color:"#9BD17A",item:"campfire"},
+ {title:"Neon Haystack",artist:"The Velvet Tractors",genre:"Synthwave",type:"same_vibe",vibe:"110 BPM · dreamy · warm synths",reason:"Your mellow taste, wearing sunglasses",color:"#A8D8F0",item:"boombox"},
+ {title:"Moth Choir",artist:"Saffi Lune",genre:"Ambient",type:"hidden_gem",listeners:"3.1K",reason:"Your slow songs, stretched into clouds",color:"#C9B8F0",item:"fireflies"},
+ {title:"Gravel Waltz",artist:"Bruno Okafor Quartet",genre:"Jazz",type:"same_vibe",vibe:"92 BPM · mellow · late-night",reason:"A jazz classic-in-the-making for indie ears",color:"#FFB38A",item:"saxophone"},
+ {title:"Pothole Anthem",artist:"Sour Milk Society",genre:"Punk",type:"hidden_gem",listeners:"21K",reason:"Same energy as your loudest pick, but rawer",color:"#FF9A9A",item:"sign"},
+ {title:"Cumbia del Prado",artist:"Lupe Vasquera",genre:"Cumbia",type:"same_vibe",vibe:"100 BPM · sunny · swaying",reason:"A dance-floor star you've never met",color:"#FFD966",item:"maracas"},
+ {title:"Static Bloom",artist:"Haru Nimbus",genre:"Lo-fi",type:"hidden_gem",listeners:"5.6K",reason:"Hazy beats next door to your bedroom-pop picks",color:"#A8D8F0",item:"cassette"},
+ {title:"Hayloft Hollow",artist:"The Clover Pickers",genre:"Bluegrass",type:"same_vibe",vibe:"124 BPM · bright · twangy strings",reason:"Fast and happy, like your upbeat favorites",color:"#9BD17A",item:"banjo"}
+];
+const ITEM_NAMES={lanterns:"Paper lanterns",drum:"A djembe drum",campfire:"A campfire",boombox:"A boombox",fireflies:"Fireflies",saxophone:"A saxophone",sign:"A crooked sign",maracas:"Maracas",cassette:"A cassette",banjo:"A banjo"};
+const EXAMPLES=[
+ {title:"Velvet Static",artist:"Juno Park"},
+ {title:"Orchard Lights",artist:"The Hollow Pines"},
+ {title:"Midnight Laundromat",artist:"Cass Ortega"},
+ {title:"Glass Garden",artist:"Lumen Kids"},
+ {title:"Slow Bicycle",artist:"Ana Rivo"}
+];
+const LEVELS=[{n:1,name:"Calf",min:0},{n:2,name:"Heifer",min:3},{n:3,name:"Cow",min:6},{n:4,name:"Moosician",min:10}];
+const SCALE=[.6,.78,.9,1];
+const levelOf=d=>LEVELS.reduce((a,l)=>d>=l.min?l:a,LEVELS[0]);
+
+const fresh=()=>({onboarded:false,songs:[],start:Date.now(),day:0,todayListened:false,listenedDays:0,streak:0,milk:0,discovered:[],missed:false,feedback:null,log:{}});
+function load(){try{const r=localStorage.getItem(KEY);if(r)return Object.assign(fresh(),JSON.parse(r));}catch(e){}return fresh();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+let S=load();
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const RM=window.matchMedia('(prefers-reduced-motion: reduce)');
+const cur=()=>SUGG[S.day%SUGG.length];
+let tab='today';
+
+/* ---------- toast ---------- */
+const tq=[];let tBusy=false;
+function toast(m){tq.push(m);if(!tBusy)nextToast();}
+function nextToast(){const m=tq.shift();const el=$('#toast');if(!m){tBusy=false;return;}tBusy=true;el.textContent=m;el.classList.add('show');
+  setTimeout(()=>{el.classList.remove('show');setTimeout(nextToast,260);},2500);}
+
+/* ---------- onboarding: music search (Deezer, with demo-catalog fallback) ---------- */
+// Live search uses Deezer's public API via JSONP (no key needed). Inside a sandbox that blocks
+// external hosts (e.g. the published artifact) every call fails fast and the demo catalog is used.
+const DZ='https://api.deezer.com';
+let srcMode='demo', popular=[], picks=[], shown=[], searchSeq=0, deb=0;
+
+function jsonp(url,ms){
+  return new Promise((res,rej)=>{
+    const cb='__dz'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+    const s=document.createElement('script');
+    const done=()=>{clearTimeout(t);try{delete window[cb];}catch(e){window[cb]=undefined;}s.remove();};
+    const t=setTimeout(()=>{done();rej(new Error('timeout'));},ms||4500);
+    window[cb]=d=>{done();(d&&d.error)?rej(new Error(d.error.message||'api error')):res(d);};
+    s.onerror=()=>{done();rej(new Error('blocked'));};
+    s.src=url+(url.includes('?')?'&':'?')+'output=jsonp&callback='+cb;
+    document.head.appendChild(s);
+  });
+}
+const fromDeezer=t=>({id:'dz'+t.id,title:t.title_short||t.title||'',artist:(t.artist&&t.artist.name)||'',album:(t.album&&t.album.title)||'',
+  cover:(t.album&&(t.album.cover_medium||t.album.cover_small))||'',preview:t.preview||'',color:PAL[t.id%5]});
+
+const MOCK=(function(){
+  const T=["Tangerine Hours","Moon Over the Laundromat","Soft Engine","Cardboard Crowns","Honey Radar","Sleepwalk Bakery","Pocket Thunder","Kites in December","Lemon Satellite","Blue Tram Home","Static Peaches","Sundial Disco","Quiet Volcano","Glow Worm Avenue","Bicycle Bells","Neon Clover","Late Bus to Nowhere","Marmalade Radio","Paper Moon Motel","Wild Oat Waltz","Coral Telephone","Night Swim Club","Velcro Hearts","Rainy Arcade","Saffron Signal","Tin Can Romance","Cloud Factory","Mint Condition","Polaroid Summer","Gravel & Glitter","Snow Globe Riot","Faraway Fax","Pebble Choir","Elevator Ocean","Lantern Juice","Starfruit Freeway","Window Seat Lullaby","Backyard Comet","Moonbeam Mixtape","Orange Peel Parade"];
+  const A=["Juno Park","The Hollow Pines","Cass Ortega","Lumen Kids","Ana Rivo","Pico & The Plums","Yara Moss","The Teaspoon Union","Felix Ondo","Marigold Machine","Nell Vantaggio","Okto Bloom","The Sleepy Mopeds","Rosa Kilner","Dune Rabbit","Tomo Faraday","Bea Larkspur","The Paper Boats"];
+  const out=EXAMPLES.map((e,i)=>({id:'m'+i,title:e.title,artist:e.artist,album:'',color:PAL[i%6]}));
+  const r=rng(42);
+  T.forEach((t,k)=>out.push({id:'m'+(k+5),title:t,artist:A[Math.floor(r()*A.length)],album:'',color:PAL[Math.floor(r()*6)]}));
+  return out;
+})();
+const hash=str=>{let h=7;for(const c of String(str))h=(h*31+c.charCodeAt(0))%99991;return h;};
+const coverHTML=s=>s.cover?`<img src="${esc(s.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:coverSVG(s,hash(s.id));
+
+function setMode(m){
+  srcMode=m;const l=$('#srcLabel');
+  l.textContent=m==='deezer'?'live · via Deezer':'demo catalog';
+  l.classList.toggle('live',m==='deezer');
+  l.title=m==='deezer'?'Search results, covers and 30s previews from Deezer':'Deezer is not reachable here, so invented songs are used';
+}
+function renderPicks(added){
+  let h='';
+  for(let i=0;i<5;i++){const p=picks[i];
+    h+=p?`<button class="slot filled${added===p.id?' pop':''}" type="button" data-rm="${i}" aria-label="Remove ${esc(p.title)}"><span class="sc">${coverHTML(p)}</span><span class="x" aria-hidden="true">×</span><span class="st">${esc(p.title)}</span></button>`
+       :`<div class="slot"><span class="sc empty">${i+1}</span><span class="st">&nbsp;</span></div>`;}
+  $('#picks').innerHTML=h;
+  $('#startBtn').disabled=picks.length<5;
+  $('#onbHint').textContent=picks.length<5?`${picks.length}/5 picked. Tap a song to add it.`:`5/5 picked. She's ready to chew.`;
+  document.querySelectorAll('.res').forEach(r=>{const on=picks.some(p=>p.id===r.dataset.id);r.classList.toggle('on',on);r.setAttribute('aria-pressed',on?'true':'false');r.querySelector('.add').textContent=on?'✓':'+';});
+}
+$('#picks').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)return;picks.splice(+b.dataset.rm,1);renderPicks();});
+
+const PV_ICON=`<svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="#FFFFFF" stroke="rgba(31,26,23,.25)" stroke-width="3"/><circle class="ring" cx="18" cy="18" r="15" fill="none" stroke="#1F1A17" stroke-width="3" stroke-dasharray="94.25" stroke-dashoffset="94.25" transform="rotate(-90 18 18)"/><path class="i-play" d="M14.5,11.5 L25,18 L14.5,24.5Z" fill="#1F1A17" stroke="#1F1A17" stroke-width="1.5" stroke-linejoin="round"/><rect class="i-stop" x="12.5" y="12.5" width="11" height="11" rx="2" fill="#1F1A17"/></svg>`;
+function renderResults(list,label,emptyMsg){
+  stopPreview();shown=list;$('#resLabel').textContent=label;
+  const ul=$('#results');
+  if(!list.length){ul.innerHTML=`<li class="empty">${emptyMsg}</li>`;return;}
+  ul.innerHTML=list.map((s,i)=>`<li class="row"><button class="res" type="button" data-i="${i}" data-id="${esc(s.id)}" aria-pressed="false"><span class="rc">${coverHTML(s)}</span><span class="rt"><b>${esc(s.title)}</b><span>${esc(s.artist)}${s.album?' · '+esc(s.album):''}</span></span><span class="add" aria-hidden="true">+</span></button>${(s.preview||!s.cover)?`<button class="pv" type="button" data-pv="${i}" aria-label="Preview ${esc(s.title)}">${PV_ICON}</button>`:''}</li>`).join('');
+  renderPicks();
+}
+$('#results').addEventListener('click',e=>{
+  const pv=e.target.closest('[data-pv]');if(pv){togglePreview(shown[+pv.dataset.pv],pv);return;}
+  const r=e.target.closest('.res');if(!r)return;const s=shown[+r.dataset.i];
+  const k=picks.findIndex(p=>p.id===s.id);
+  if(k>=0){picks.splice(k,1);renderPicks();return;}
+  if(picks.length>=5){toast('5 picks max. Tap one at the top to swap it out.');return;}
+  picks.push(s);renderPicks(s.id);
+});
+
+function showPopular(){
+  if(srcMode==='deezer')renderResults(popular,'Popular right now','');
+  else renderResults(MOCK.slice(0,15),'Popular right now','');
+}
+async function runSearch(q){
+  const seq=++searchSeq;
+  if(!q){showPopular();return;}
+  if(srcMode==='deezer'){
+    $('#resLabel').textContent='Searching…';
+    try{const d=await jsonp(`${DZ}/search?q=${encodeURIComponent(q)}&limit=20`);
+      if(seq!==searchSeq)return;
+      renderResults((d.data||[]).map(fromDeezer),`Results for “${q}”`,`No songs found for “${esc(q)}”.`);return;
+    }catch(e){if(seq!==searchSeq)return;setMode('demo');}
+  }
+  const ql=q.toLowerCase();
+  renderResults(MOCK.filter(s=>(s.title+' '+s.artist).toLowerCase().includes(ql)),`Results for “${q}”`,`No songs found for “${esc(q)}”. Try “moon” or “Juno”.`);
+}
+$('#q').addEventListener('input',()=>{const q=$('#q').value.trim();$('#clearQ').hidden=!q;clearTimeout(deb);deb=setTimeout(()=>runSearch(q),280);});
+$('#q').addEventListener('keydown',e=>{if(e.key==='Enter'){clearTimeout(deb);runSearch($('#q').value.trim());}});
+$('#clearQ').addEventListener('click',()=>{$('#q').value='';$('#clearQ').hidden=true;runSearch('');$('#q').focus();});
+
+async function initCatalog(){
+  if(popular.length){setMode('deezer');showPopular();return;}
+  $('#resLabel').textContent='Popular right now';$('#srcLabel').textContent='loading…';
+  $('#results').innerHTML='<li class="empty">Tuning in…</li>';
+  try{const d=await jsonp(`${DZ}/chart/0/tracks?limit=20`,3500);
+    if(!d.data||!d.data.length)throw new Error('empty');
+    popular=d.data.map(fromDeezer);setMode('deezer');
+  }catch(e){setMode('demo');}
+  if(!$('#q').value.trim())showPopular();else runSearch($('#q').value.trim());
+}
+
+/* previews: Deezer 30s MP3, or a little generated tune for demo songs */
+const audio=new Audio();audio.preload='none';
+let pvCur=null,pvRaf=0,pvMock=null,pvStart=0,actx=null;
+function mockTune(seed){
+  try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}
+  if(actx.state==='suspended')actx.resume();
+  const r=rng(seed+1),scale=[0,2,4,7,9,12,14,16],base=196*Math.pow(2,Math.floor(r()*7)/12);
+  const out=actx.createGain();out.gain.value=.07;out.connect(actx.destination);
+  const t0=actx.currentTime+.05;
+  for(let k=0;k<32;k++){const t=t0+k*.25;if(r()<.18)continue;
+    const o=actx.createOscillator(),g=actx.createGain();o.type=k%8===0?'sine':'triangle';
+    o.frequency.value=base*Math.pow(2,scale[Math.floor(r()*scale.length)]/12);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(1,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.23);
+    o.connect(g);g.connect(out);o.start(t);o.stop(t+.25);}
+  return out;
+}
+function setRing(btn,f){const r=btn.querySelector('.ring');if(r)r.setAttribute('stroke-dashoffset',(94.25*(1-f)).toFixed(2));}
+function stopPreview(){
+  audio.pause();
+  if(pvMock){try{pvMock.disconnect();}catch(e){}pvMock=null;}
+  cancelAnimationFrame(pvRaf);
+  if(pvCur){pvCur.btn.classList.remove('playing');setRing(pvCur.btn,0);}
+  pvCur=null;
+}
+function togglePreview(s,btn){
+  const same=pvCur&&pvCur.id===s.id;stopPreview();if(same)return;
+  pvCur={id:s.id,btn};btn.classList.add('playing');
+  if(s.preview){audio.src=s.preview;audio.play().catch(()=>{toast("This preview won't play right now.");stopPreview();});}
+  else{pvMock=mockTune(hash(s.id));pvStart=performance.now();}
+  const loop=()=>{if(!pvCur)return;
+    const f=s.preview?(audio.duration?audio.currentTime/audio.duration:0):(performance.now()-pvStart)/8000;
+    setRing(btn,Math.min(1,f));if(f>=1){stopPreview();return;}pvRaf=requestAnimationFrame(loop);};
+  loop();
+}
+audio.addEventListener('ended',stopPreview);
+
+function initOnb(){
+  picks=(S.songs||[]).filter(s=>s&&s.title).slice(0,5).map((s,i)=>({id:'saved'+i,title:s.title,artist:s.artist,album:'',cover:s.cover||'',color:PAL[i%6]}));
+  $('#q').value='';$('#clearQ').hidden=true;
+  renderPicks();initCatalog();
+}
+$('#fillBtn').addEventListener('click',()=>{
+  const src=(srcMode==='deezer'&&popular.length>=5)?popular:MOCK;
+  picks=src.slice(0,5);renderPicks();$('#startBtn').focus();
+});
+$('#startBtn').addEventListener('click',()=>{
+  if(picks.length<5)return;stopPreview();
+  S.songs=picks.map(p=>({title:p.title,artist:p.artist,cover:p.cover||''}));
+  S.onboarded=true;S.start=Date.now();save();showView();setTab('today');
+  toast('🥛 Morning milking! Your fresh track is ready.');
+});
+
+function showView(){ $('#onb').hidden=S.onboarded; $('#app').hidden=!S.onboarded; if(!S.onboarded)initOnb(); else renderAll(); }
+
+/* ---------- tabs ---------- */
+function setTab(t){
+  tab=t;
+  document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t?'true':'false'));
+  ['today','pasture','stats'].forEach(id=>{$('#'+id).hidden=id!==t;});
+  if(t==='pasture'){ $('#tabDot').hidden=true; renderPasture(); }
+  if(t==='stats')renderStats();
+  hideTip();
+}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
+
+/* ---------- covers ---------- */
+function rng(seed){return()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};}
+function blob(cx,cy,r,n,rand,v){
+  const p=[];for(let k=0;k<n;k++){const a=k/n*Math.PI*2;const rr=r*(1-v+rand()*v*2);p.push([cx+Math.cos(a)*rr,cy+Math.sin(a)*rr]);}
+  const f=x=>x.toFixed(1);const last=p[n-1];let d=`M${f((last[0]+p[0][0])/2)},${f((last[1]+p[0][1])/2)}`;
+  for(let k=0;k<n;k++){const a=p[k],b=p[(k+1)%n];d+=` Q${f(a[0])},${f(a[1])} ${f((a[0]+b[0])/2)},${f((a[1]+b[1])/2)}`;}
+  return d+'Z';
+}
+function coverSVG(s,i){
+  const r=rng(i*977+31);const others=PAL.filter(c=>c!==s.color);const alt=others[i%others.length];const alt2=others[(i+3)%others.length];
+  let dots='';for(let k=0;k<5;k++)dots+=`<circle cx="${(14+r()*92).toFixed(0)}" cy="${(14+r()*70).toFixed(0)}" r="2.6" fill="${INK}"/>`;
+  return `<svg viewBox="0 0 120 120" aria-hidden="true"><rect x="4" y="4" width="112" height="112" rx="12" fill="${s.color}" stroke="${INK}" stroke-width="4"/>
+  ${dots}<path d="${blob(60,60,32,7,r,.32)}" fill="${alt}" stroke="${INK}" stroke-width="3.5"/>
+  <circle cx="${(36+r()*48).toFixed(0)}" cy="${(36+r()*30).toFixed(0)}" r="${(7+r()*6).toFixed(0)}" fill="${alt2}" stroke="${INK}" stroke-width="3"/>
+  <path d="M14,${(98+r()*4).toFixed(0)} q11,-10 23,0 t23,0 t23,0 t23,0" fill="none" stroke="${INK}" stroke-width="3.2" stroke-linecap="round"/></svg>`;
+}
+
+/* ---------- player ---------- */
+const DUR=6000; let playing=false,prog=0,last=0;
+const ICON={
+  play:`<svg viewBox="0 0 24 24"><path d="M7,4 L20,12 L7,20 Z" fill="${INK}" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/></svg>`,
+  pause:`<svg viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1.5" fill="${INK}"/><rect x="14" y="4" width="5" height="16" rx="1.5" fill="${INK}"/></svg>`,
+  replay:`<svg viewBox="0 0 24 24"><path d="M5,12 a7,7 0 1 0 2.2,-5.1" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/><path d="M4,3 v5 h5" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+};
+const fmt=sec=>`0:${String(Math.floor(sec)).padStart(2,'0')}`;
+function drawPlayer(){
+  const fill=$('#barFill');fill.style.width=(prog*100)+'%';fill.classList.toggle('full',prog>=1);
+  $('#pTime').textContent=`${fmt(prog*30)} / 0:30`;
+  const b=$('#playBtn');
+  if(playing){b.innerHTML=ICON.pause;b.setAttribute('aria-label','Pause');$('#pStatus').innerHTML='<span class="eq" aria-hidden="true"><b></b><b></b><b></b></span>Now mooing';}
+  else if(S.todayListened&&prog>=1){b.innerHTML=ICON.replay;b.setAttribute('aria-label','Play again');$('#pStatus').innerHTML='<span class="done-pill">Listened ✓</span>';}
+  else{b.innerHTML=ICON.play;b.setAttribute('aria-label','Play');$('#pStatus').textContent=prog>0?'Paused':'30-second preview';}
+  $('#songCard').classList.toggle('playing',playing);
+}
+function tick(t){
+  if(!playing)return;
+  prog=Math.min(1,prog+(t-last)/DUR);last=t;drawPlayer();
+  if(prog>=1){playing=false;drawPlayer();complete();}else requestAnimationFrame(tick);
+}
+$('#playBtn').addEventListener('click',()=>{
+  if(playing){playing=false;drawPlayer();return;}
+  if(prog>=1)prog=0;
+  playing=true;last=performance.now();drawPlayer();requestAnimationFrame(tick);
+});
+function stopPlayer(){playing=false;prog=0;}
+
+function complete(){
+  if(S.todayListened){drawPlayer();return;}
+  const before=levelOf(S.listenedDays);
+  const s=cur();
+  S.todayListened=true;S.listenedDays++;S.streak++;S.milk++;S.missed=false;
+  logEntry(S.day).listened=true;
+  let newItem=false;
+  if(!S.discovered.some(d=>d.key===s.item)){S.discovered.push({key:s.item,genre:s.genre,title:s.title,artist:s.artist,fresh:true});newItem=true;}
+  save();
+  flyDrop();
+  renderToday();
+  const after=levelOf(S.listenedDays);
+  toast('+1 milk 🥛 Udderly fresh!');
+  if(after.n>before.n)toast(`Your cow grew! She's now a ${after.name}.`);
+  if(newItem)toast(`New in your pasture: ${ITEM_NAMES[s.item].toLowerCase()} (${s.genre}).`);
+}
+
+function flyDrop(){
+  const dot=$('#tabDot');
+  const finish=()=>{dot.hidden=false;const t=$('#tabPasture');t.classList.remove('wiggle');void t.offsetWidth;t.classList.add('wiggle');};
+  if(RM.matches){finish();return;}
+  const a=$('#playBtn').getBoundingClientRect(),b=$('#pastureIcon').getBoundingClientRect();
+  const x0=a.left+a.width/2,y0=a.top+a.height/2,dx=b.left+b.width/2-x0,dy=b.top+b.height/2-y0;
+  const el=document.createElement('div');el.className='fly';el.style.left=x0+'px';el.style.top=y0+'px';
+  el.innerHTML=`<svg viewBox="0 0 24 24" width="30" height="30"><path d="M12,2 C12,2 3.5,12.5 3.5,17 a8.5,8.5 0 0 0 17,0 C20.5,12.5 12,2 12,2z" fill="#FFFFFF" stroke="${INK}" stroke-width="2.4"/><circle cx="9" cy="16" r="1.6" fill="${INK}"/></svg>`;
+  document.body.appendChild(el);
+  const anim=el.animate([
+    {transform:'translate(0,0) scale(1) rotate(0)'},
+    {transform:`translate(${dx*.45}px,${dy*.45-110}px) scale(1.5) rotate(-20deg)`,offset:.45},
+    {transform:`translate(${dx}px,${dy}px) scale(.55) rotate(10deg)`,opacity:.7}
+  ],{duration:950,easing:'cubic-bezier(.4,0,.6,1)'});
+  anim.onfinish=()=>{el.remove();finish();};
+}
+
+/* ---------- feedback ---------- */
+const FB_MSG={love:"Saved. The cow loves it too.",nope:"Got it. Less of this, more of something else.",knew:"Noted. The cow will dig deeper next time."};
+document.querySelectorAll('.fb').forEach(b=>b.addEventListener('click',()=>{
+  const v=b.dataset.fb;S.feedback=S.feedback===v?null:v;logEntry(S.day).fb=S.feedback;save();renderFeedback();
+  if(S.feedback)toast(FB_MSG[v]);
+}));
+function renderFeedback(){document.querySelectorAll('.fb').forEach(b=>b.setAttribute('aria-pressed',S.feedback===b.dataset.fb?'true':'false'));}
+
+/* ---------- today ---------- */
+function renderToday(){
+  const s=cur(),i=S.day%SUGG.length;
+  const d=new Date(S.start+S.day*864e5);
+  $('#dateLabel').textContent=d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+  $('#dayChip').textContent='Day '+(S.day+1);
+  $('#missedBanner').hidden=!(S.missed&&!S.todayListened);
+  $('#cover').innerHTML=coverSVG(s,i);
+  $('#sTitle').textContent=s.title;$('#sArtist').textContent=s.artist;$('#sGenre').textContent=s.genre;
+  $('#why').innerHTML=s.type==='hidden_gem'
+    ?`<span class="badge gem">🌱 Hidden gem</span><span class="why-line"><b>${esc(s.listeners)} monthly listeners</b> · ${esc(s.reason)}</span>`
+    :`<span class="badge vibe">🔀 Same vibe, new world</span><span class="why-line">Matches your taste in: <b>${esc(s.vibe)}</b></span><span class="why-line">${esc(s.reason)}</span>`;
+  const pick=S.songs[S.day%5]||{title:'your picks',artist:''};
+  $('#chewed').innerHTML=`Chewed from your pick “${esc(pick.title)}”${pick.artist?' by '+esc(pick.artist):''}.`;
+  if(S.todayListened&&!playing)prog=1;
+  drawPlayer();renderFeedback();
+  $('#after').hidden=!S.todayListened;
+  updateCountdown();
+}
+function updateCountdown(){
+  if(!S.todayListened)return;
+  const n=new Date(),t=new Date(n);t.setDate(t.getDate()+1);t.setHours(7,30,0,0);
+  let s=Math.max(0,Math.floor((t-n)/1000));const h=Math.floor(s/3600);s-=h*3600;const m=Math.floor(s/60);s-=m*60;
+  $('#countdown').textContent=`${h}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+}
+setInterval(updateCountdown,1000);
+$('#seeCow').addEventListener('click',()=>setTab('pasture'));
+
+/* ---------- pasture ---------- */
+const scene=$('#scene');
+const NS='http://www.w3.org/2000/svg';
+function mk(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e;}
+(function buildDecor(){
+  // string light bulbs along two quadratic curves
+  const g=$('#bulbs');const segs=[[[50,250],[160,300],[266,272]],[[266,272],[325,295],[384,268]]];const cols=['#FFD966','#F6A6B8','#A8D8F0','#FFFFFF'];let c=0;
+  segs.forEach(([p0,p1,p2],si)=>{for(let t=.08;t<1;t+=si?0.22:0.12){const x=(1-t)*(1-t)*p0[0]+2*(1-t)*t*p1[0]+t*t*p2[0],y=(1-t)*(1-t)*p0[1]+2*(1-t)*t*p1[1]+t*t*p2[1];
+    mk('circle',{cx:x.toFixed(1),cy:(y+6).toFixed(1),r:5,fill:cols[c++%4],class:'bulb'},g);}});
+  // grass tufts: first one always, rest from lv2
+  const tufts=$('#tufts');
+  [[96,470,1],[286,415,2],[150,400,2],[230,540,3],[20,410,3],[365,545,4]].forEach(([x,y,l])=>{
+    mk('path',{d:`M${x-10},${y} q2,-14 6,-18 M${x},${y} q0,-18 2,-24 M${x+10},${y} q-2,-14 -6,-18`,stroke:'#3E7A2E',class:l>1?'lvl'+l:''},tufts);});
+  // flowers lv2
+  const fl=$('#flowers');
+  [[138,532,'#F6A6B8'],[302,532,'#FFD966'],[80,410,'#FFFFFF'],[372,580,'#F6A6B8'],[14,575,'#FFD966'],[225,398,'#FFFFFF']].forEach(([x,y,col])=>{
+    const g=mk('g',{},fl);mk('path',{d:`M${x},${y} v16`,stroke:'#3E7A2E','stroke-width':3,fill:'none'},g);
+    for(let k=0;k<5;k++){const a=k/5*Math.PI*2;mk('circle',{cx:(x+Math.cos(a)*6).toFixed(1),cy:(y+Math.sin(a)*6).toFixed(1),r:4.5,fill:col,'stroke-width':2},g);}
+    mk('circle',{cx:x,cy:y,r:3.5,fill:'#FFD966','stroke-width':2},g);});
+})();
+
+let mooTimer=null;
+function mood(){return S.todayListened?'happy':(S.missed?'bored':'waiting');}
+function headPos(){const sc=SCALE[levelOf(S.listenedDays).n-1];const ty=518-78*sc;const bored=mood()==='bored'?36*sc:0;return{x:185+82*sc,y:ty-30*sc-37*sc+bored,sc};}
+function placeBubble(text){
+  const h=headPos();const b=$('#bubble');
+  b.setAttribute('transform',`translate(${Math.min(h.x+6,292).toFixed(1)},${(h.y-12).toFixed(1)})`);
+  $('#bubbleText').textContent=text;b.style.opacity=text?1:0;
+  $('#hearts').setAttribute('transform',`translate(${(h.x-8).toFixed(1)},${(h.y-6).toFixed(1)})`);
+}
+function renderPasture(){
+  const lv=levelOf(S.listenedDays),sc=SCALE[lv.n-1];
+  scene.setAttribute('data-lv',lv.n);
+  $('#cowWrap').setAttribute('transform',`translate(185,${(518-78*sc).toFixed(1)}) scale(${sc})`);
+  const m=mood();scene.classList.remove('mood-happy','mood-waiting','mood-bored');scene.classList.add('mood-'+m);
+  let changed=false;
+  Object.keys(ITEM_NAMES).forEach(k=>{
+    const el=document.getElementById('item-'+k);const d=S.discovered.find(x=>x.key===k);
+    if(d){el.removeAttribute('hidden');el.setAttribute('tabindex','0');el.setAttribute('role','button');el.setAttribute('aria-label',`${ITEM_NAMES[k]}, unlocked by ${d.title}`);
+      if(d.fresh&&tab==='pasture'){el.classList.remove('pop');void el.getBoundingClientRect();if(!RM.matches)el.classList.add('pop');d.fresh=false;changed=true;}}
+    else el.setAttribute('hidden','');
+  });
+  if(changed)save();
+  if(!mooTimer)placeBubble(m==='waiting'?'♪':m==='bored'?'yaaawn…':'');
+}
+
+/* ---------- stats ---------- */
+const ITEM_EMOJI={lanterns:'🏮',drum:'🥁',campfire:'🔥',boombox:'📻',fireflies:'✨',saxophone:'🎷',sign:'🪧',maracas:'🎶',cassette:'📼',banjo:'🪕'};
+function logEntry(day){
+  if(!S.log)S.log={};
+  if(!S.log[day]){const s=SUGG[day%SUGG.length];S.log[day]={title:s.title,artist:s.artist,genre:s.genre,listened:false,fb:null};}
+  return S.log[day];
+}
+function renderStats(){
+  const lv=levelOf(S.listenedDays),next=LEVELS[lv.n];
+  $('#stStreak').textContent=S.streak;$('#stMilk').textContent=S.milk;$('#stDays').textContent=S.listenedDays;
+  $('#stLevel').textContent=`Lv ${lv.n} · ${lv.name}`;
+  if(next){const left=next.min-S.listenedDays;$('#stNext').textContent=`${left} more ${left===1?'track':'tracks'} to ${next.name}`;
+    $('#stBar').style.width=((S.listenedDays-lv.min)/(next.min-lv.min)*100)+'%';}
+  else{$('#stNext').textContent='Top level reached';$('#stBar').style.width='100%';}
+  $('#ladder').innerHTML=LEVELS.map(l=>`<li class="${l.n===lv.n?'now':l.n<lv.n?'got':''}"><b>${l.name}</b>${l.n===4?'10+':l.min+'+'} days</li>`).join('');
+  $('#diary').innerHTML=S.discovered.length
+    ?S.discovered.map(d=>`<li><span class="em" aria-hidden="true">${ITEM_EMOJI[d.key]||'🎵'}</span><span class="dt"><b>${esc(d.genre)} · ${ITEM_NAMES[d.key]||''}</b><span>“${esc(d.title)}” by ${esc(d.artist)}</span></span></li>`).join('')
+    :`<li class="empty-note">Listen to your first track to plant something in the pasture.</li>`;
+  const days=[];for(let d=S.day;d>=0;d--)days.push(d);
+  const entries=days.map(d=>({d,e:S.log&&S.log[d]})).filter(x=>x.e||x.d===S.day);
+  const FBE={love:'❤️',nope:'👎',knew:'🙈'};
+  $('#log').innerHTML=entries.map(({d,e})=>{
+    e=e||logEntry(d);
+    const chip=e.listened?'<span class="stat-chip ok">Listened ✓</span>':d===S.day?'<span class="stat-chip today">Today</span>':'<span class="stat-chip miss">Missed</span>';
+    return `<li><span class="dnum">D${d+1}</span><span class="dt"><b>${esc(e.title)}${e.fb?' '+FBE[e.fb]:''}</b><span>${esc(e.artist)} · ${esc(e.genre)}</span></span>${chip}</li>`;}).join('');
+  const all=Object.values(S.log||{});const c=k=>all.filter(e=>e.fb===k).length;
+  $('#fbsum').textContent=`❤️ ${c('love')} loved · 👎 ${c('nope')} not for me · 🙈 ${c('knew')} already known`;
+}
+
+function moo(){
+  const hop=$('#cowHop');hop.classList.remove('hop');void hop.getBoundingClientRect();if(!RM.matches)hop.classList.add('hop');
+  clearTimeout(mooTimer);placeBubble('Moo!');
+  mooTimer=setTimeout(()=>{mooTimer=null;renderPasture();},1300);
+}
+const cowTap=$('#cowTap');
+cowTap.addEventListener('click',e=>{e.stopPropagation();hideTip();moo();});
+cowTap.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();moo();}});
+
+/* tooltips */
+const tip=$('#tip');
+function hideTip(){tip.hidden=true;}
+function showTip(el){
+  const k=el.dataset.key,d=S.discovered.find(x=>x.key===k);if(!d)return;
+  tip.innerHTML=`<b>${ITEM_NAMES[k]}</b><br>Unlocked by “${esc(d.title)}” · ${esc(d.artist)}<br><span>${esc(d.genre)}</span>`;
+  tip.hidden=false;
+  const f=$('#field').getBoundingClientRect(),r=el.getBoundingClientRect();
+  const tw=tip.offsetWidth,th=tip.offsetHeight;
+  let x=r.left-f.left+r.width/2-tw/2;x=Math.max(10,Math.min(f.width-tw-10,x));
+  let y=r.top-f.top-th-8;if(y<70)y=r.bottom-f.top+8;
+  y=Math.min(y,f.height-th-70);
+  tip.style.left=x+'px';tip.style.top=y+'px';
+}
+document.querySelectorAll('.item').forEach(el=>{
+  el.addEventListener('click',e=>{e.stopPropagation();showTip(el);});
+  el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showTip(el);}});
+});
+$('#field').addEventListener('click',hideTip);
+
+/* ---------- next day / menu ---------- */
+$('#nextDayBtn').addEventListener('click',()=>{
+  stopPlayer();
+  const missed=!S.todayListened;
+  logEntry(S.day);
+  if(missed){S.streak=0;}
+  S.missed=missed;S.day++;S.todayListened=false;S.feedback=null;save();
+  renderAll();
+  toast(missed?"Day "+(S.day+1)+". She missed you. No worries, the pasture is still here.":"Day "+(S.day+1)+". 🥛 Morning milking! Your fresh track is ready.");
+});
+const menu=$('#menu'),menuBtn=$('#menuBtn'),resetBtn=$('#resetBtn');let armed=false;
+function closeMenu(){menu.hidden=true;menuBtn.setAttribute('aria-expanded','false');armed=false;resetBtn.textContent='Reset demo';}
+menuBtn.addEventListener('click',e=>{e.stopPropagation();if(menu.hidden){menu.hidden=false;menuBtn.setAttribute('aria-expanded','true');}else closeMenu();});
+menu.addEventListener('click',e=>e.stopPropagation());
+document.addEventListener('click',()=>{if(!menu.hidden)closeMenu();});
+resetBtn.addEventListener('click',()=>{
+  if(!armed){armed=true;resetBtn.textContent='Tap again to reset';return;}
+  stopPlayer();S=fresh();save();closeMenu();$('#tabDot').hidden=true;tab='today';showView();
+});
+
+function renderAll(){renderToday();renderPasture();setTab(tab);}
+
+/* boiling lines: re-seed the turbulence ~3 times per second */
+const turb=document.getElementById('turb');let seed=1;
+setInterval(()=>{if(RM.matches||document.hidden)return;seed=seed%6+1;turb.setAttribute('seed',seed);},340);
+
+showView();
+})();
+</script>
+</body>
+</html>
