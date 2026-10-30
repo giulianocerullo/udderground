@@ -12,9 +12,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Udderground">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#FFF8EC">
+<meta name="theme-color" content="#FBFAF6">
 <style>
-html{height:100%;box-sizing:border-box}
+html{height:100%;box-sizing:border-box;background:#FBFAF6}
 body{margin:0;font:14px system-ui,sans-serif;-webkit-text-size-adjust:100%}
 img{max-width:100%}
 [hidden]{display:none!important}
@@ -134,7 +134,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 /* today: one screen, no scrolling needed */
 #today{padding:14px max(18px,env(safe-area-inset-right,0px)) 18px max(18px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
 #today[hidden]{display:none!important}
-.dayhead{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:52px}
+.dayhead{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px}
 .dayhead h2{font-size:28px}
 .daystk{width:58px;height:58px;flex:none;transform:rotate(8deg);filter:drop-shadow(1px 2px 0 rgba(23,20,15,.22))}
 .daystk svg{width:100%;height:100%;display:block;overflow:visible}
@@ -154,7 +154,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 #songCard[hidden]{display:none}
 
 /* the record: sleeve in shrink-wrap + hype sticker; swipe it like a card */
-.stage{display:flex;justify-content:center;padding-top:4px}
+.stage{display:flex;justify-content:center;margin-top:-6px}
 .disc{position:relative;width:min(100%,max(190px,calc(100svh - 545px)),300px);padding:14px 22px 4px 4px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;outline:none}
 .disc:focus-visible .sleeve{outline:3px solid var(--ink);outline-offset:5px}
 .disc.drag{cursor:grabbing}
@@ -186,10 +186,10 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 .info .badges{display:flex;gap:6px;height:38px;align-items:center}
 .minis{height:38px;width:auto;display:block;overflow:visible;transform:rotate(-3deg);filter:drop-shadow(1px 2px 0 rgba(23,20,15,.2))}
 .info h3{font-size:28px;line-height:1.05;overflow-wrap:anywhere}
-.info .artist{font-size:15px;font-weight:600;color:var(--ink2);overflow-wrap:anywhere}
-.why{font-size:14px;line-height:1.4;color:var(--ink)}
+.info .artist{font-size:15px;font-weight:700;color:var(--ink);overflow-wrap:anywhere}
+.why{font-size:14px;line-height:1.4;color:var(--ink);font-weight:500}
 .why b{font-weight:800}
-.chewed{color:var(--mute)}
+.chewed{color:var(--ink2)}
 .links{display:flex;gap:14px;flex-wrap:wrap;margin-top:2px}
 .links[hidden]{display:none}
 .links a{font:700 13px var(--body);color:var(--ink);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:var(--pink)}
@@ -239,7 +239,11 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 /* pasture (scene untouched) */
 #pasture{overflow:hidden}
 .field{position:absolute;inset:0;background:linear-gradient(to bottom,var(--scene-sky) 0 70%,var(--scene-meadow) 70%)}
-.field svg.scene{position:absolute;inset:0;width:100%;height:100%;display:block}
+.fscroll{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x;cursor:grab}
+.fscroll::-webkit-scrollbar{display:none}
+.fscroll.drag{cursor:grabbing}
+.strip{position:relative;height:100%}
+.field svg.scene{position:absolute;left:0;bottom:0;display:block}
 .tip{position:absolute;z-index:8;max-width:230px;background:var(--white);border:2.5px solid var(--ink);border-radius:16px;box-shadow:var(--sh-sm);padding:9px 12px;font-size:14px;line-height:1.35;pointer-events:none}
 .tip b{font:800 16px var(--body)}
 .tip span{color:var(--ink2)}
@@ -321,6 +325,14 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 .bp-head{display:flex;align-items:center;gap:12px}
 .bp-head h2{font-size:26px;margin-right:auto}
 
+#logAll{align-self:stretch}
+.gate-only{display:none}
+.tut.gate .gate-only{display:block}
+.tut.gate{background:var(--milk);align-items:center}
+.tut.gate .tut-card{box-shadow:0 6px 0 var(--ink)}
+.tut.gate #tutSkip,.tut.gate #tutDone{display:none}
+.gate-end{font-weight:700;color:var(--ink)!important}
+
 /* scene: levels */
 .lvl2,.lvl3,.lvl4{display:none}
 #scene[data-lv="2"] .lvl2,#scene[data-lv="3"] .lvl2,#scene[data-lv="3"] .lvl3,#scene[data-lv="4"] .lvl2,#scene[data-lv="4"] .lvl3,#scene[data-lv="4"] .lvl4{display:inline}
@@ -375,7 +387,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 <style>
 /* standalone web app: the bars themselves reach the screen edges and clear the notch / home indicator */
 @media (max-width:539px),(max-height:719px){
-  .appbar{padding-top:calc(8px + env(safe-area-inset-top,0px))}
+  .appbar{padding-top:calc(8px + env(safe-area-inset-top,0px));background:#FBFAF6}
   #onb{padding-top:calc(20px + env(safe-area-inset-top,0px))}
   .tabbar{padding-bottom:max(4px,env(safe-area-inset-bottom,0px))}
   .toast{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
@@ -511,10 +523,12 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
       <!-- PASTURE -->
       <section class="screen" id="pasture" role="tabpanel" aria-labelledby="tabPasture" hidden>
         <div class="field" id="field">
-
-          <svg class="scene" id="scene" viewBox="0 0 390 600" preserveAspectRatio="xMidYMax meet" data-lv="1" aria-label="Your pasture">
-            <g filter="url(#wobble)" stroke="#1F1A17" stroke-linejoin="round" stroke-linecap="round">
-              <rect x="-200" y="-400" width="790" height="1000" fill="#A8D8F0" stroke="none"/>
+         <div class="fscroll" id="fscroll"><div class="strip" id="strip">
+          <svg class="scene" id="scene" viewBox="0 0 2340 600" preserveAspectRatio="xMinYMax meet" data-lv="1" aria-label="Your pasture. Drag sideways to look around.">
+            <!-- the pasture is one 780-wide tile, drawn three times so it loops forever -->
+            <use href="#world" x="-780"/>
+            <g id="world" transform="translate(780,0)" filter="url(#wobble)" stroke="#1F1A17" stroke-linejoin="round" stroke-linecap="round">
+              <rect x="0" y="-400" width="780" height="1040" fill="#A8D8F0" stroke="none"/>
               <!-- sun -->
               <g stroke-width="4">
                 <path d="M60,22 v-12 M60,118 v12 M12,70 h-12 M108,70 h12 M26,36 l-9,-9 M94,104 l9,9 M94,36 l9,-9 M26,104 l-9,9" fill="none"/>
@@ -549,7 +563,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
                 </g>
               </g>
               <!-- back hill -->
-              <path d="M-200,352 L0,350 Q100,306 205,338 T390,326 L590,330 V600 H-200 Z" fill="#6FAE52" stroke-width="4"/>
+              <path d="M0,350 Q100,306 205,338 T390,326 C470,282 520,318 585,330 S680,394 780,350 L780,640 L0,640 Z" fill="#6FAE52" stroke="none"/><path d="M0,350 Q100,306 205,338 T390,326 C470,282 520,318 585,330 S680,394 780,350" fill="none" stroke-width="4"/>
               <!-- stage + string lights (lv4) -->
               <g class="lvl4">
                 <g stroke-width="3.5">
@@ -578,7 +592,15 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
                 <path d="M156,344 l6,-6 l6,6 v52 h-12 z M194,342 l6,-6 l6,6 v52 h-12 z M232,341 l6,-6 l6,6 v52 h-12 z M270,340 l6,-6 l6,6 v52 h-12 z"/>
               </g>
               <!-- front ground -->
-              <path d="M-200,384 L0,382 Q120,358 222,374 T390,368 L590,372 V640 H-200 Z" fill="#9BD17A" stroke-width="4"/>
+              <path d="M0,382 Q120,358 222,374 T390,368 C456,346 520,360 600,372 S660,406 780,382 L780,640 L0,640 Z" fill="#9BD17A" stroke="none"/><path d="M0,382 Q120,358 222,374 T390,368 C456,346 520,360 600,372 S660,406 780,382" fill="none" stroke-width="4"/>
+              <!-- the far meadow: room for more things to grow -->
+              <g stroke-width="3.5">
+                <ellipse cx="575" cy="468" rx="62" ry="17" fill="#A8D8F0"/>
+                <path d="M543,466 q14,-6 28,0 M585,472 q12,-5 24,0" fill="none" stroke="#FFFFFF" stroke-width="3"/>
+                <path d="M690,430 q8,-22 30,-20 q22,-2 26,20 z" fill="#C9C2B4"/>
+                <path d="M470,412 q10,-26 34,-24 q26,0 30,24 z" fill="#6FAE52"/>
+              </g>
+              <g class="lvl3" stroke-width="3.5" fill="#FFFFFF"><path class="cloud" d="M560,140 q-4,-22 20,-22 q8,-20 32,-10 q22,-8 28,14 q20,2 16,18 z"/></g>
               <!-- grass + flowers (generated) -->
               <g id="tufts" fill="none" stroke-width="3"></g>
               <g id="flowers" class="lvl2"></g>
@@ -735,7 +757,10 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
                 <text id="bubbleText" x="44" y="-6" text-anchor="middle" font-family="Figtree, sans-serif" font-weight="900" font-size="21" fill="#1F1A17" stroke="none">♪</text>
               </g>
             </g>
+            <use href="#world" x="780"/>
+
           </svg>
+         </div></div>
 
           <div class="tip" id="tip" hidden></div>
         </div>
@@ -761,6 +786,14 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
         <div class="sechead"><h2>Track log</h2></div>
         <div class="fbsum" id="fbsum"></div>
         <ul class="card log" id="log"></ul>
+        <button class="btn ghost" id="logAll" type="button">See all tracks</button>
+      </section>
+
+      <!-- TRACK LOG (full page) -->
+      <section class="bookpage" id="logPage" hidden aria-labelledby="logTitle">
+        <div class="bp-head"><button class="iconbtn" id="logBack" type="button" aria-label="Back to stats"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15,5 L8,12 L15,19" fill="none" stroke="#17140F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2 id="logTitle">Track log</h2><span class="eyebrow" id="logCount"></span></div>
+        <div class="fbsum" id="fbsum2"></div>
+        <ul class="card log" id="logFull"></ul>
       </section>
 
       <!-- STICKER BOOK (full page) -->
@@ -810,19 +843,22 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 <circle cx="16.5" cy="27.5" r="1.5" fill="#1F1A17"/><circle cx="23.5" cy="27.5" r="1.5" fill="#1F1A17"/>
 </g></svg></div><span class="tut-moo">Moo!</span></div>
         <h2 id="tutTitle">Welcome to the pasture.</h2>
-        <p>Every morning at <span class="t730">07:30</span> a cow picks one song you've never heard. Listen, and she grows.</p>
-        <button class="btn" id="tutNext" type="button">Put her on my Home Screen</button>
+        <p>Once a day, at milking time (<span class="t730">07:30</span>), the cow brings you one song you've never heard. Listen to it every day and she grows, and so does her pasture.</p>
+        <p class="gate-only">Udderground lives on your Home Screen, so the cow can find you every morning. Add it there first, then open it from your Home Screen.</p>
+        <button class="btn" id="tutNext" type="button">Show me how</button>
         <button class="textbtn" id="tutSkip" type="button">Maybe later</button>
       </div>
       <div class="tut-step" id="tut2" hidden>
         <h2>Add to Home Screen</h2>
         <ol class="tut-list">
           <li><span class="ios"><svg viewBox="0 0 32 32"><path d="M8,10.5 H24 M8,16 H24 M8,21.5 H19" stroke="#1C1C1E" stroke-width="2.4" stroke-linecap="round"/></svg></span><span>Tap the <b>menu button</b> on the left of the address bar</span></li>
-          <li><span class="ios"><svg viewBox="0 0 32 32"><path d="M11,12 H9.5 a2.5,2.5 0 0 0 -2.5,2.5 V25 a2.5,2.5 0 0 0 2.5,2.5 h13 a2.5,2.5 0 0 0 2.5,-2.5 V14.5 a2.5,2.5 0 0 0 -2.5,-2.5 H21" fill="none" stroke="#0A84FF" stroke-width="2" stroke-linecap="round"/><path d="M16,19 V4.5 M11.5,9 L16,4.5 L20.5,9" fill="none" stroke="#0A84FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Tap <b>Share</b></span></li>
+          <li><span class="ios"><svg viewBox="0 0 32 32"><path d="M11,12 H9.5 a2.5,2.5 0 0 0 -2.5,2.5 V25 a2.5,2.5 0 0 0 2.5,2.5 h13 a2.5,2.5 0 0 0 2.5,-2.5 V14.5 a2.5,2.5 0 0 0 -2.5,-2.5 H21" fill="none" stroke="#1C1C1E" stroke-width="2" stroke-linecap="round"/><path d="M16,19 V4.5 M11.5,9 L16,4.5 L20.5,9" fill="none" stroke="#1C1C1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Tap <b>Share</b></span></li>
           <li><span class="ios"><svg viewBox="0 0 32 32"><rect x="5" y="5" width="22" height="22" rx="6" fill="none" stroke="#1C1C1E" stroke-width="2"/><path d="M16,10.5 V21.5 M10.5,16 H21.5" stroke="#1C1C1E" stroke-width="2" stroke-linecap="round"/></svg></span><span>Scroll down and tap <b>Add to Home Screen</b></span></li>
           <li><span class="ios"><svg viewBox="0 0 32 32"><rect x="2" y="8" width="28" height="16" rx="8" fill="#34C759"/><circle cx="22" cy="16" r="6.5" fill="#fff"/></svg></span><span>Keep <b>Open as Web App</b> on, then tap <b>Add</b></span></li>
         </ol>
+        <p class="gate-only gate-end">Then close Safari and open <b>Udderground</b> from your Home Screen.</p>
         <button class="btn" id="tutDone" type="button">Got it</button>
+        <button class="textbtn gate-only" id="tutBack" type="button">Back</button>
       </div>
       <div class="tut-dots" aria-hidden="true"><i class="on"></i><i></i></div>
     </div>
@@ -1233,8 +1269,8 @@ function setTab(t){
   tab=t;
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t?'true':'false'));
   ['today','pasture','stats'].forEach(id=>{$('#'+id).hidden=id!==t;});
-  if(t==='pasture'){$('#tabDot').hidden=true;renderPasture();}
-  $('#bookPage').hidden=true;
+  if(t==='pasture'){$('#tabDot').hidden=true;renderPasture();layoutField();}
+  $('#bookPage').hidden=true;$('#logPage').hidden=true;
   if(t==='stats'){$('#statsDot').hidden=true;renderStats();}
   hideTip();
 }
@@ -1514,6 +1550,27 @@ document.querySelectorAll('.item').forEach(el=>{
   el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showTip(el);}});
 });
 $('#field').addEventListener('click',hideTip);
+/* endless meadow: the 780-wide tile is drawn three times; scrolling wraps back into the middle copy */
+const TILE=780,fsc=$('#fscroll');let fScale=1,fReady=false,fWrapping=false;
+function layoutField(){
+  const fw=fsc.clientWidth,fh=fsc.clientHeight;if(!fw||!fh)return;
+  const off=fReady?(fsc.scrollLeft/fScale):null;
+  fScale=Math.min(fw/390,fh/600);
+  const sv=$('#scene');sv.style.width=(TILE*3*fScale)+'px';sv.style.height=(600*fScale)+'px';$('#strip').style.width=(TILE*3*fScale)+'px';
+  fsc.scrollLeft=off!=null?off*fScale:TILE*fScale-(fw-390*fScale)/2;fReady=true;
+}
+fsc.addEventListener('scroll',()=>{
+  hideTip();if(fWrapping)return;const T=TILE*fScale,x=fsc.scrollLeft;
+  if(x<T*.5||x>T*1.5){fWrapping=true;fsc.scrollLeft=x<T*.5?x+T:x-T;requestAnimationFrame(()=>{fWrapping=false;});}
+},{passive:true});
+window.addEventListener('resize',()=>{if(tab==='pasture')layoutField();});
+(function(){ // mouse drag on desktop
+  let down=false,moved=false,sx=0,sl=0;
+  fsc.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse')return;down=true;moved=false;sx=e.clientX;sl=fsc.scrollLeft;});
+  window.addEventListener('pointermove',e=>{if(!down)return;const dx=e.clientX-sx;if(Math.abs(dx)>4){moved=true;fsc.classList.add('drag');}if(moved)fsc.scrollLeft=sl-dx;});
+  window.addEventListener('pointerup',()=>{down=false;fsc.classList.remove('drag');});
+  fsc.addEventListener('click',e=>{if(moved){e.stopPropagation();e.preventDefault();moved=false;}},true);
+})();
 
 /* ---------- sticker book ---------- */
 const STREAKS=[3,7,14,30,60,100];
@@ -1572,16 +1629,26 @@ function renderStats(){
   else{$('#stNext').textContent='Top level reached';$('#stBar').style.width='100%';}
   $('#ladder').innerHTML=LEVELS.map(l=>`<li class="${l.n===lv.n?'now':l.n<lv.n?'got':''}"><b>${l.name}</b>${l.min}+ days</li>`).join('');
   renderBook();
+  renderLog();
+}
+function logRows(keys){
   const tk=todayKey();
-  const keys=Object.keys(S.days).sort().reverse();
-  $('#log').innerHTML=keys.length?keys.map(k=>{const d=S.days[k],s=d.sug;
+  return keys.map(k=>{const d=S.days[k],s=d.sug;
     const chip=d.listened?'<span class="stat-chip ok">Listened ✓</span>':k===tk?'<span class="stat-chip today">Today</span>':'<span class="stat-chip miss">Missed</span>';
     const lab=keyDate(k).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    return `<li><span class="dnum">${esc(lab)}</span><span class="dt"><b>${esc(s.title)}${d.fb?' '+icon(d.fb):''}</b><span>${esc(s.artist)} · ${esc(s.genre)}</span></span>${chip}</li>`;}).join('')
-    :`<li class="empty-note">Your daily tracks will show up here.</li>`;
-  const all=Object.values(S.days);const c=k=>all.filter(e=>e.fb===k).length;
-  $('#fbsum').innerHTML=`<span>${icon('love')} ${c('love')} loved</span><span>${icon('nope')} ${c('nope')} not for me</span><span>${icon('knew')} ${c('knew')} already known</span>`;
+    return `<li><span class="dnum">${esc(lab)}</span><span class="dt"><b>${esc(s.title)}${d.fb?' '+icon(d.fb):''}</b><span>${esc(s.artist)} · ${esc(s.genre)}</span></span>${chip}</li>`;}).join('');
 }
+function renderLog(){
+  const keys=Object.keys(S.days).sort().reverse();
+  $('#log').innerHTML=keys.length?logRows(keys.slice(0,5)):`<li class="empty-note">Your daily tracks will show up here.</li>`;
+  $('#logAll').hidden=keys.length<=5;$('#logAll').textContent=`See all ${keys.length} tracks`;
+  const all=Object.values(S.days);const c=k=>all.filter(e=>e.fb===k).length;
+  const sum=`<span>${icon('love')} ${c('love')} loved</span><span>${icon('nope')} ${c('nope')} not for me</span><span>${icon('knew')} ${c('knew')} already known</span>`;
+  $('#fbsum').innerHTML=sum;$('#fbsum2').innerHTML=sum;$('#logCount').textContent=`${keys.length} ${keys.length===1?'day':'days'}`;
+  if(!$('#logPage').hidden)$('#logFull').innerHTML=logRows(keys);
+}
+$('#logAll').addEventListener('click',()=>{$('#logPage').hidden=false;renderLog();$('#logPage').scrollTop=0;$('#logBack').focus({preventScroll:true});});
+$('#logBack').addEventListener('click',()=>{$('#logPage').hidden=true;$('#logAll').focus({preventScroll:true});});
 
 /* ---------- menu ---------- */
 const menu=$('#menu'),menuBtn=$('#menuBtn'),resetBtn=$('#resetBtn');let armed=false;
@@ -1602,17 +1669,18 @@ resetBtn.addEventListener('click',()=>{
 function renderAll(){loadToday();renderPasture();setTab(tab);}
 
 /* ---------- first-run tutorial: only in iOS Safari, never from the Home Screen ---------- */
-const tutEl=$('#tut');
+const tutEl=$('#tut');let GATED=false;
 function tutStep(n){
   $('#tut1').hidden=n!==1;$('#tut2').hidden=n!==2;$('#tutArrow').hidden=n!==2;tutEl.classList.toggle('s2',n===2);
   tutEl.querySelectorAll('.tut-dots i').forEach((d,i)=>d.classList.toggle('on',i===n-1));
-  (n===1?$('#tutNext'):$('#tutDone')).focus({preventScroll:true});
+  if(!tutEl.classList.contains('gate')||n===1)(n===1?$('#tutNext'):$('#tutDone')).focus({preventScroll:true});
 }
-function openTut(n){tutEl.hidden=false;tutStep(n||1);}
+function openTut(n,gate){tutEl.classList.toggle('gate',!!gate);tutEl.hidden=false;tutStep(n||1);}
 function closeTut(){tutEl.hidden=true;S.tutSeen=true;save();}
 $('#tutNext').addEventListener('click',()=>tutStep(2));
 $('#tutSkip').addEventListener('click',closeTut);
 $('#tutDone').addEventListener('click',closeTut);
+$('#tutBack').addEventListener('click',()=>tutStep(1));
 $('#howBtn').addEventListener('click',()=>{closeMenu();openTut(2);});
 (function(){
   const ua=navigator.userAgent||'';
@@ -1620,14 +1688,16 @@ $('#howBtn').addEventListener('click',()=>{closeMenu();openTut(2);});
   const standalone=navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
   let framed=true;try{framed=window.top!==window.self;}catch(e){}
   const otherBrowser=/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
-  if((ios&&!standalone&&!framed&&!otherBrowser&&!S.tutSeen)||location.hash==='#welcome')openTut(1);
+  // In iOS Safari the app is only a doorway: it explains the cow and how to add it to the Home Screen.
+  GATED=(ios&&!standalone&&!framed&&!otherBrowser)||location.hash==='#welcome';
+  if(GATED)openTut(1,true);
 })();
 
 /* boiling lines */
 const turb=document.getElementById('turb');let seed=1;
-setInterval(()=>{if(RM.matches||document.hidden)return;seed=seed%6+1;turb.setAttribute('seed',seed);},340);
+setInterval(()=>{if(RM.matches||document.hidden||tab!=='pasture')return;seed=seed%6+1;turb.setAttribute('seed',seed);},340);
 
-showView();
+if(!GATED)showView();
 })();
 </script>
 </body>
