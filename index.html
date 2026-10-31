@@ -615,7 +615,6 @@ button.ctile:active{transform:translateY(2px);box-shadow:none}
 <style>
 /* the strip under the status bar is a solid copy of the page colour, so iOS never tints or blurs it */
 #sbcap{position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top,0px);background:var(--milk);z-index:1000;pointer-events:none}
-html.splashing #sbcap{background:#FF8FAB}
 </style>
 <style>
 /* dark theme: same sticker look, inverted paper. Coloured stickers keep dark ink text. */
@@ -3351,7 +3350,7 @@ const turb=document.getElementById('turb');let seed=1;
 setInterval(()=>{if(RM.matches||document.hidden||tab!=='pasture'||Date.now()-fBusy<700)return;seed=seed%6+1;turb.setAttribute('seed',seed);},340);
 
 /* ---------- self-update: the Home Screen app checks for a newer version on open ---------- */
-const BUILD='20261031-195848';
+const BUILD='20261031-201114';
 async function checkUpdate(){
   if(BUILD.startsWith('__')||location.protocol!=='https:')return;
   try{
