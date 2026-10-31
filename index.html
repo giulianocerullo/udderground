@@ -593,6 +593,24 @@ button.ctile:active{transform:translateY(2px);box-shadow:none}
 .intro-step[hidden]{display:none}
 .intro .tut-card{touch-action:pan-y}
 </style>
+<style>
+/* launch splash: plays every time the Home Screen app starts */
+#splash{position:fixed;inset:0;z-index:999;background:#FF8FAB;display:none;flex-direction:column;align-items:center;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px)}
+#splash.on{display:flex}
+#splash .sp-cow{width:240px;height:240px;animation:spPop .7s cubic-bezier(.3,1.55,.5,1) both}
+#splash .sp-cow svg{width:100%;height:100%;display:block;overflow:visible}
+#splash .sp-cow svg>g{transform-box:fill-box;transform-origin:50% 60%;animation:spNod .5s ease-in-out .75s 2 alternate}
+#splash .sp-moo{position:absolute;left:calc(50% + 48px);top:calc(50% - 104px);background:#FFFFFF;border:3px solid #17140F;border-radius:18px 18px 18px 5px;padding:7px 13px;font:900 22px/1 'Figtree',system-ui,sans-serif;color:#17140F;box-shadow:0 3px 0 #17140F;transform-origin:0 100%;animation:spMoo .35s cubic-bezier(.3,1.6,.5,1) .55s both}
+#splash .wm{position:absolute;left:0;right:0;bottom:calc(46px + env(safe-area-inset-bottom,0px));justify-content:center;font-size:38px;color:#17140F;animation:spUp .5s ease-out .2s both}
+#splash .wm .o path:first-child{fill:#FFFFFF}
+#splash.out{animation:spOut .35s ease-in forwards}
+@keyframes spPop{0%{transform:scale(.2) rotate(-12deg);opacity:0}60%{opacity:1}100%{transform:none}}
+@keyframes spNod{to{transform:rotate(-7deg) translateY(-2px)}}
+@keyframes spMoo{from{transform:scale(0) rotate(-20deg)}to{transform:rotate(-6deg)}}
+@keyframes spUp{from{transform:translateY(18px);opacity:0}}
+@keyframes spOut{to{opacity:0;transform:scale(1.04)}}
+@media (prefers-reduced-motion:reduce){#splash *,#splash.out{animation-duration:.01s!important;animation-delay:0s!important}}
+</style>
 </head>
 <body>
 <!-- shared SVG filter for the hand-drawn pasture ("boil") -->
@@ -609,6 +627,24 @@ button.ctile:active{transform:translateY(2px);box-shadow:none}
   </defs>
 </svg>
 
+<div id="splash" aria-hidden="true"><div class="sp-cow"><svg viewBox="0 0 40 40" aria-hidden="true"><g transform="translate(20,21) scale(0.86) translate(-20,-21)">
+<ellipse cx="8" cy="14" rx="7" ry="3.5" transform="rotate(-25 8 14)" fill="#FFFFFF" stroke="#1F1A17" stroke-width="2.6"/>
+<ellipse cx="32" cy="14" rx="7" ry="3.5" transform="rotate(25 32 14)" fill="#FFFFFF" stroke="#1F1A17" stroke-width="2.6"/>
+<ellipse cx="20" cy="20" rx="13" ry="14" fill="#FFFFFF" stroke="#1F1A17" stroke-width="3"/>
+<path d="M10,12 q4,-5 9,-3 q0,5 -4,6 q-5,1 -5,-3z" fill="#1F1A17"/>
+<circle cx="15" cy="18" r="2" fill="#1F1A17"/><circle cx="25" cy="18" r="2" fill="#1F1A17"/>
+<ellipse cx="20" cy="28" rx="10" ry="6" fill="#F6A6B8" stroke="#1F1A17" stroke-width="2.6"/>
+<circle cx="16.5" cy="27.5" r="1.5" fill="#1F1A17"/><circle cx="23.5" cy="27.5" r="1.5" fill="#1F1A17"/>
+</g></svg></div><span class="sp-moo">Moo!</span><span class="wm" >uddergr<span class="o"><svg viewBox="0 0 24 32" aria-hidden="true"><path d="M12,1 C12,1 1.5,14 1.5,20.5 a10.5,10.5 0 0 0 21,0 C22.5,14 12,1 12,1z" fill="#FF8FAB" stroke="#17140F" stroke-width="2.6"/><path d="M10,25 v-8 l6,-1.6 v6.6" fill="none" stroke="#17140F" stroke-width="2" stroke-linecap="round"/><circle cx="8.8" cy="25" r="2" fill="#17140F"/><circle cx="14.8" cy="22" r="2" fill="#17140F"/></svg></span>und</span></div>
+<script>
+/* show the splash only when launched from the Home Screen (or with #splash to preview it) */
+(function(){var sa=navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
+if(!sa&&location.hash!=='#splash')return;var el=document.getElementById('splash');el.className='on';
+var rm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches,t0=Date.now();
+function hide(){var wait=Math.max(0,(rm?500:1700)-(Date.now()-t0));setTimeout(function(){el.classList.add('out');setTimeout(function(){el.remove();},380);},wait);}
+if(document.readyState==='complete')hide();else window.addEventListener('load',hide);
+setTimeout(function(){if(el.isConnected){el.classList.add('out');setTimeout(function(){el.remove();},380);}},4000);})();
+</script>
 <div class="phone" id="phone">
 
   <!-- ONBOARDING -->
@@ -3270,7 +3306,7 @@ const turb=document.getElementById('turb');let seed=1;
 setInterval(()=>{if(RM.matches||document.hidden||tab!=='pasture'||Date.now()-fBusy<700)return;seed=seed%6+1;turb.setAttribute('seed',seed);},340);
 
 /* ---------- self-update: the Home Screen app checks for a newer version on open ---------- */
-const BUILD='20261031-191946';
+const BUILD='20261031-193740';
 async function checkUpdate(){
   if(BUILD.startsWith('__')||location.protocol!=='https:')return;
   try{
