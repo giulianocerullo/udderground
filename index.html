@@ -498,7 +498,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 .ctile{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--white);border:2px solid var(--line);border-radius:16px;padding:6px 4px 7px;font:700 11px/1.15 var(--body);color:var(--mute);text-align:center;min-width:0}
 button.ctile{cursor:pointer;color:var(--ink);border-color:var(--ink);box-shadow:var(--sh-sm)}
 button.ctile:active{transform:translateY(2px);box-shadow:none}
-.cth{width:100%;aspect-ratio:1;display:block}.cth svg{width:100%;height:100%;display:block;overflow:visible}
+.cth{width:100%;aspect-ratio:1;display:block}.cth > svg{width:100%;height:100%;display:block;overflow:visible}.cth svg svg{overflow:hidden}
 .ctn{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;max-width:100%;min-height:2.3em}
 .sil *{fill:#3B342C!important;stroke:#3B342C!important}
 .ctile.isgold{background:#FFF4C9}
@@ -1699,7 +1699,7 @@ function complete(){
   const item=discover(d.sug);
   const sb=Math.min(CFG.XP_STREAK*S.streak,CFG.XP_STREAK_MAX),xp=CFG.XP_LISTEN+sb+(newGenre?CFG.XP_GENRE:0);
   const ev=gainXP(xp);const bonus=bonusRoll(k);if(bonus)ev.push(bonus);
-  const hy=claimHype(d);
+  const hy=claimHype(d);if(!hy)S.hype.dry++;
   stampUnlocks();
   save();flyDrop();peelSticker();showTrack(d);renderHeader();
   toast('+1 milk. Udderly fresh! Sticker saved.');
@@ -2639,8 +2639,8 @@ $('#dbgSim').addEventListener('click',()=>{
 
 /* ======================= HYPE STICKERS: 50 collectibles that can come with the daily track ======================= */
 /* chance a new day carries a collectible: MAX with an empty book, falling to MIN near 50/50.
-   pity: after (PITY_BASE + owned/PITY_STEP) days without one, the next day always has one. */
-const HCFG={MAX:.5,MIN:.06,CURVE:1.6,PITY_BASE:4,PITY_STEP:5};
+   pity: if the last PITY-1 listened songs brought none, the next song always does. */
+const HCFG={MAX:.5,MIN:.06,CURVE:1.6,PITY:10};
 /* [id, pun, shape, fill, motif]  fill 'holo' = rainbow foil, 'ink' = night sticker */
 const HYPE=[
  ['moosic','Moo-sic to my ears','circle','#FF8FAB','cow'],
@@ -2704,11 +2704,10 @@ function hypeOrder(){ // which one comes next is seeded per user, like the pastu
   hOrd={k:S.lootSeed,a};return a;
 }
 const hypeChance=own=>HCFG.MIN+(HCFG.MAX-HCFG.MIN)*Math.pow((HYPE.length-own)/HYPE.length,HCFG.CURVE);
-const hypePity=own=>HCFG.PITY_BASE+Math.floor(own/HCFG.PITY_STEP);
+const hypePity=()=>HCFG.PITY;
 function hypeRoll(H,owned,rnd){
   const own=Object.keys(owned).length;if(own>=HYPE.length)return false;
-  if(H.dry+1>=hypePity(own)||rnd<hypeChance(own)){H.dry=0;return true;}
-  H.dry++;return false;
+  return H.dry+1>=hypePity()||rnd<hypeChance(own);
 }
 /* decided when the day's track is picked, so the sealed record already wears it. A collectible you
    didn't get to listen to is never lost: it comes back on the next day. */
@@ -2720,7 +2719,7 @@ function assignHype(k){
 }
 function claimHype(d){
   const id=d&&d.hype,H=S.hype;if(!id||H.owned[id])return null;
-  H.owned[id]=Date.now();if(H.pending===id)H.pending=null;S.newSticker='h'+id;return HI[id];
+  H.owned[id]=Date.now();if(H.pending===id)H.pending=null;H.dry=0;S.newSticker='h'+id;return HI[id];
 }
 
 /* ---------- drawing ---------- */
@@ -2810,10 +2809,10 @@ $('#dbgHype').addEventListener('click',()=>{
 $('#dbgHypeSim').addEventListener('click',()=>{
   const marks=[10,25,40,48,50],tot={},R=300;
   for(let run=0;run<R;run++){const r=lrng(S.lootSeed,'hsim',run),H={dry:0},owned={};let day=0,n=0;
-    while(n<HYPE.length&&day<5000){day++;if(hypeRoll(H,owned,r())){owned['x'+n]=1;n++;if(marks.includes(n))tot[n]=(tot[n]||0)+day;}}}
+    while(n<HYPE.length&&day<5000){day++;if(hypeRoll(H,owned,r())){owned['x'+n]=1;n++;H.dry=0;if(marks.includes(n))tot[n]=(tot[n]||0)+day;}else H.dry++;}}
   const own=hypeCount();
-  dbgOut(`Daily listens to reach (avg of ${R} runs)\n`+marks.map(m=>`${String(m).padStart(2)}/50  ~${Math.round(tot[m]/R)} days`).join('\n')+
-    `\nYou: ${own}/50 · chance now ${Math.round(hypeChance(own)*100)}% · pity after ${hypePity(own)-1} days without (${S.hype.dry} so far)`);
+  dbgOut(`Songs listened to reach (avg of ${R} runs)\n`+marks.map(m=>`${String(m).padStart(2)}/50  ~${Math.round(tot[m]/R)} days`).join('\n')+
+    `\nYou: ${own}/50 · chance now ${Math.round(hypeChance(own)*100)}% · guaranteed by song ${hypePity()} (${S.hype.dry} without so far)`);
 });
 
 /* ---------- sticker book ---------- */
