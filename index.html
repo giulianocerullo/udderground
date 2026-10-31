@@ -688,7 +688,7 @@ button.ctile:active{transform:translateY(2px);box-shadow:none}
          <div class="fscroll" id="fscroll"><div class="strip" id="strip">
           <svg class="scene" id="scene" viewBox="0 0 780 600" preserveAspectRatio="xMinYMax meet" data-lv="1" aria-label="Your pasture. Drag sideways to look around.">
             <!-- the pasture is 780 wide (two screens); its edges are invisible walls -->
-            <g id="world" filter="url(#wobble)" stroke="#1F1A17" stroke-linejoin="round" stroke-linecap="round">
+            <g id="world" stroke="#1F1A17" stroke-linejoin="round" stroke-linecap="round">
               <rect x="0" y="-400" width="780" height="1040" fill="#A8D8F0" stroke="none"/>
               <g id="extSky"></g>
               <!-- sun -->
@@ -2386,6 +2386,8 @@ function waitingNote(id){const z=NI[id]?NI[id].zone:'ground';
 
 /* ---------- drawing items into the pasture ---------- */
 const layerSky=()=>$('#layerSky'),layerObj=()=>$('#objects');
+/* the doodle 'boil' filter goes on each piece, not on the whole meadow: Safari stops drawing filters over very large areas */
+const wob=el=>{if(el&&el.setAttribute)el.setAttribute('filter','url(#wobble)');return el;};
 function zInsert(el,z){
   el.dataset.z=z;const L=layerObj();
   const after=[...L.children].find(c=>+c.dataset.z>z);L.insertBefore(el,after||null);
@@ -2408,7 +2410,7 @@ function renderNewItems(){
       el=document.createElementNS(NS,'g');el.setAttribute('class','item nitem'+(o.g?' gold':''));el.id='item-'+id;el.dataset.key=id;el.dataset.gold=gold;
       el.setAttribute('transform',`translate(${s.x},${s.y})`);el.setAttribute('tabindex','0');el.setAttribute('role','button');
       el.setAttribute('aria-label',`${o.g?'Golden ':''}${NI[id].name}, ${NI[id].r==='prestige'?'prestige':RAR[NI[id].r].name.toLowerCase()} item`);
-      el.innerHTML=`<g class="nb">${itemSVG(id)}</g>`;
+      el.innerHTML=`<g class="nb">${itemSVG(id)}</g>`;wob(el);
       if(s.zone==='sky')layerSky().appendChild(el);else zInsert(el,s.z);
     }
     if(o.fresh&&tab==='pasture'){const t=popT(el);t.classList.remove('pop');void el.getBoundingClientRect();if(!RM.matches)t.classList.add('pop');o.fresh=0;fresh.push(id);}
@@ -2433,6 +2435,13 @@ function positionGenre(k){
     const el=document.getElementById('item-'+k);if(!el)return;
     const wr=document.createElementNS(NS,'g');wr.id='pos-'+k;el.parentNode.insertBefore(wr,el);wr.appendChild(el);
     if(!GENRE_ZONE[k]){wr.dataset.z=600;L.appendChild(wr);}
+  });
+  const world=$('#world');world.removeAttribute('filter');
+  const BOX=['extSky','extBack','extFront','objects','layerSky'];
+  [...world.children].forEach(c=>{
+    if(BOX.includes(c.id)){[...c.children].forEach(k=>{if(k.tagName!=='rect')wob(k);});return;}
+    if(c.tagName==='rect')return; // plain sky, nothing to wobble
+    wob(c);
   });
   // tap anything new in the meadow
   const onTap=e=>{const it=e.target.closest&&e.target.closest('.nitem');if(!it)return;e.stopPropagation();showTip(it);};
