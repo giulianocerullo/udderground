@@ -595,16 +595,17 @@ button.ctile:active{transform:translateY(2px);box-shadow:none}
 </style>
 <style>
 /* launch splash: plays every time the Home Screen app starts. Only transform/opacity on HTML boxes, so it stays smooth while the app loads underneath */
-#splash{position:fixed;inset:0;z-index:999;background:#FF8FAB;display:none;flex-direction:column;align-items:center;justify-content:center}
+#splash{position:fixed;inset:0;z-index:999;background:var(--milk);display:none;flex-direction:column;align-items:center;justify-content:center}
 #splash.on{display:flex}
-#splash .sp-stage{position:relative;width:250px;height:250px;display:grid;place-items:center}
-#splash .sp-cow{position:relative;width:250px;height:250px;will-change:transform,opacity;animation:spPop .6s cubic-bezier(.3,1.5,.5,1) .12s both}
+#splash .sp-stage{position:relative;width:260px;height:260px;display:grid;place-items:center}
+#splash .sp-disc{position:absolute;inset:0;border-radius:50%;background:var(--pink);border:3px solid var(--ink);box-shadow:0 6px 0 var(--ink);will-change:transform;animation:spDisc .55s cubic-bezier(.3,1.4,.5,1) both}
+#splash .sp-cow{position:relative;width:210px;height:210px;will-change:transform,opacity;animation:spPop .6s cubic-bezier(.3,1.5,.5,1) .12s both}
 #splash .sp-nod{width:100%;height:100%;transform-origin:50% 70%;will-change:transform;animation:spNod 1s ease-in-out .75s both}
 #splash .sp-nod svg{width:100%;height:100%;display:block;overflow:visible}
-#splash .sp-moo{position:absolute;left:calc(50% + 50px);top:calc(50% - 108px);background:#FFFFFF;border:3px solid #17140F;border-radius:18px 18px 18px 5px;padding:7px 13px;font:900 22px/1 'Figtree',system-ui,sans-serif;color:#17140F;box-shadow:0 3px 0 #17140F;transform-origin:0 100%;will-change:transform;animation:spMoo .4s cubic-bezier(.3,1.6,.5,1) .6s both}
-#splash .wm{position:absolute;left:0;right:0;bottom:calc(46px + env(safe-area-inset-bottom,0px));justify-content:center;font-size:38px;color:#17140F;will-change:transform,opacity;animation:spUp .5s ease-out .25s both}
-#splash .wm .o path:first-child{fill:#FFFFFF}
+#splash .sp-moo{position:absolute;left:calc(50% + 70px);top:calc(50% - 150px);background:#FFFFFF;border:3px solid #17140F;border-radius:18px 18px 18px 5px;padding:7px 13px;font:900 22px/1 'Figtree',system-ui,sans-serif;color:#17140F;box-shadow:0 3px 0 #17140F;transform-origin:0 100%;will-change:transform;animation:spMoo .4s cubic-bezier(.3,1.6,.5,1) .6s both}
+#splash .wm{position:absolute;left:0;right:0;bottom:calc(46px + env(safe-area-inset-bottom,0px));justify-content:center;font-size:38px;color:var(--ink);will-change:transform,opacity;animation:spUp .5s ease-out .25s both}
 #splash.out{animation:spOut .3s ease-in forwards}
+@keyframes spDisc{from{transform:scale(.4)}}
 @keyframes spPop{0%{transform:translateY(30px) scale(.5);opacity:0}50%{opacity:1}100%{transform:none;opacity:1}}
 @keyframes spNod{0%,100%{transform:none}30%{transform:rotate(-8deg)}65%{transform:rotate(6deg)}}
 @keyframes spMoo{from{transform:scale(0) rotate(-20deg)}to{transform:rotate(-6deg)}}
@@ -615,7 +616,6 @@ button.ctile:active{transform:translateY(2px);box-shadow:none}
 <style>
 /* the strip under the status bar is a solid copy of the page colour, so iOS never tints or blurs it */
 #sbcap{position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top,0px);background:var(--milk);z-index:1000;pointer-events:none}
-html.splashing #sbcap{display:none}
 </style>
 <style>
 /* dark theme: same sticker look, inverted paper. Coloured stickers keep dark ink text. */
@@ -631,6 +631,7 @@ html.splashing #sbcap{display:none}
 :root[data-theme="dark"] :is(.iconbtn,.searchbox,.clearq,.seg) [fill="#17140F"]{fill:var(--ink)}
 :root[data-theme="dark"] .sleeve,:root[data-theme="dark"] .msleeve{box-shadow:5px 7px 0 #000}
 :root[data-theme="dark"] .tut{background:rgba(0,0,0,.6)}
+:root[data-theme="dark"] #splash .sp-disc{box-shadow:0 6px 0 #000}
 :root[data-theme="dark"] .tut.gate{background:var(--milk)}
 :root[data-theme="dark"] .bigbar i{border-right-color:#17140F}
 :root[data-theme="dark"] .tut-list li{border-color:var(--line)}
@@ -661,15 +662,11 @@ html.splashing #sbcap{display:none}
 (function(){var pref='system';try{pref=(JSON.parse(localStorage.getItem('udderground-v2')||'{}').theme)||'system';}catch(e){}
 var mq=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)');
 window.__applyTheme=function(p){if(p)pref=p;var t=pref==='system'?(mq&&mq.matches?'dark':'light'):pref;var r=document.documentElement;r.setAttribute('data-theme',t);r.style.colorScheme=t;
- var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m);}m.content=t==='dark'?'#15130F':'#FBFAF6';if(window.__retint)requestAnimationFrame(window.__retint);};
-window.__retint=function(){var o=document.getElementById('sbcap');if(!o)return;var n=o.cloneNode(false);o.replaceWith(n);
- /* iOS re-reads the bar colour when the page scrolls: nudge the (otherwise fixed) document by 1px and back */
- try{var r=document.documentElement,h=r.style.height,ov=r.style.overflow;r.style.height='calc(100% + 2px)';r.style.overflow='auto';
-  requestAnimationFrame(function(){window.scrollTo(0,1);requestAnimationFrame(function(){window.scrollTo(0,0);r.style.height=h;r.style.overflow=ov;});});}catch(e){}};
+ var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m);}m.content=t==='dark'?'#15130F':'#FBFAF6';};
 window.__applyTheme();if(mq){var f=function(){if(pref==='system')window.__applyTheme();};mq.addEventListener?mq.addEventListener('change',f):mq.addListener(f);}})();
 </script>
 <div id="sbcap" aria-hidden="true"></div>
-<div id="splash" aria-hidden="true"><div class="sp-stage"><div class="sp-cow"><div class="sp-nod"><svg viewBox="0 0 40 40" aria-hidden="true"><g transform="translate(20,21) scale(0.86) translate(-20,-21)">
+<div id="splash" aria-hidden="true"><div class="sp-stage"><div class="sp-disc"></div><div class="sp-cow"><div class="sp-nod"><svg viewBox="0 0 40 40" aria-hidden="true"><g transform="translate(20,21) scale(0.86) translate(-20,-21)">
 <ellipse cx="8" cy="14" rx="7" ry="3.5" transform="rotate(-25 8 14)" fill="#FFFFFF" stroke="#1F1A17" stroke-width="2.6"/>
 <ellipse cx="32" cy="14" rx="7" ry="3.5" transform="rotate(25 32 14)" fill="#FFFFFF" stroke="#1F1A17" stroke-width="2.6"/>
 <ellipse cx="20" cy="20" rx="13" ry="14" fill="#FFFFFF" stroke="#1F1A17" stroke-width="3"/>
@@ -681,11 +678,11 @@ window.__applyTheme();if(mq){var f=function(){if(pref==='system')window.__applyT
 <script>
 /* show the splash only when launched from the Home Screen (or with #splash to preview it) */
 (function(){var sa=navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
-if(!sa&&location.hash!=='#splash')return;var el=document.getElementById('splash');el.className='on';document.documentElement.classList.add('splashing');
+if(!sa&&location.hash!=='#splash')return;var el=document.getElementById('splash');el.className='on';
 var rm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches,t0=Date.now();
-function hide(){var wait=Math.max(0,(rm?500:1900)-(Date.now()-t0));setTimeout(function(){el.classList.add('out');setTimeout(function(){el.remove();},380);document.documentElement.classList.remove('splashing');if(window.__retint)window.__retint();},wait);}
+function hide(){var wait=Math.max(0,(rm?500:1900)-(Date.now()-t0));setTimeout(function(){el.classList.add('out');setTimeout(function(){el.remove();},380);},wait);}
 if(document.readyState==='complete')hide();else window.addEventListener('load',hide);
-setTimeout(function(){if(el.isConnected){el.classList.add('out');setTimeout(function(){el.remove();},380);document.documentElement.classList.remove('splashing');if(window.__retint)window.__retint();}},4000);})();
+setTimeout(function(){if(el.isConnected){el.classList.add('out');setTimeout(function(){el.remove();},380);}},4000);})();
 </script>
 <div class="phone" id="phone">
 
@@ -3355,7 +3352,7 @@ const turb=document.getElementById('turb');let seed=1;
 setInterval(()=>{if(RM.matches||document.hidden||tab!=='pasture'||Date.now()-fBusy<700)return;seed=seed%6+1;turb.setAttribute('seed',seed);},340);
 
 /* ---------- self-update: the Home Screen app checks for a newer version on open ---------- */
-const BUILD='20261031-202010';
+const BUILD='20261031-202510';
 async function checkUpdate(){
   if(BUILD.startsWith('__')||location.protocol!=='https:')return;
   try{
