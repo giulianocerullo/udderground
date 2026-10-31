@@ -534,6 +534,17 @@ button.ctile:active{transform:translateY(2px);box-shadow:none}
 .aurora{animation:auro 6s ease-in-out infinite alternate}
 @keyframes auro{from{opacity:.7;transform:translateX(-6px)}to{opacity:1;transform:translateX(6px)}}
 
+/* hype stickers */
+.hgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 8px;background:var(--white);border:2.5px solid var(--ink);border-radius:24px;box-shadow:var(--sh);padding:14px 10px 16px}
+.htile{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;text-align:center;font:700 11px/1.15 var(--body);color:var(--mute)}
+.htile.own{color:var(--ink)}
+.htile.new .hth{animation:popin .45s ease-out}
+.hth{width:100%;aspect-ratio:1;display:grid;place-items:center}
+.hth svg{max-width:100%;max-height:100%;display:block;overflow:visible}
+.htn{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;max-width:100%;min-height:2.3em}
+.silm *{fill:#5A5148!important;stroke:#5A5148!important}
+.hchip{font:800 11px/1 var(--body);letter-spacing:.04em;text-transform:uppercase;border:2px solid var(--ink);border-radius:99px;padding:6px 9px;background:var(--butter);white-space:nowrap;box-shadow:var(--sh-sm);transform:rotate(2deg)}
+#bookPage .cnote{margin:-8px 0 0}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   .firefly,.bulb{opacity:.8}
@@ -611,6 +622,8 @@ button.ctile:active{transform:translateY(2px);box-shadow:none}
             <button class="btn ghost" id="dbgSeed" type="button">Show loot seed</button>
             <button class="btn ghost" id="dbgReroll" type="button">Reroll loot seed</button>
             <button class="btn ghost" id="dbgSim" type="button">Simulate 100 rolls</button>
+            <button class="btn ghost" id="dbgHype" type="button">+1 hype sticker</button>
+            <button class="btn ghost" id="dbgHypeSim" type="button">Simulate hype drops</button>
           </div>
           <pre class="dbg-out" id="dbgOut" hidden></pre>
         </div>
@@ -1012,6 +1025,10 @@ button.ctile:active{transform:translateY(2px);box-shadow:none}
       <!-- STICKER BOOK (full page) -->
       <section class="bookpage" id="bookPage" hidden aria-labelledby="bookTitle">
         <div class="bp-head"><button class="iconbtn" id="bookBack" type="button" aria-label="Back to stats"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15,5 L8,12 L15,19" fill="none" stroke="#17140F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2 id="bookTitle">Sticker book</h2><span class="eyebrow" id="bookCount2"></span></div>
+        <div class="sechead"><h2>Hype stickers</h2><span class="eyebrow" id="hypeCount2">0/50</span></div>
+        <p class="cnote">Some daily tracks come with a collectible hype sticker. Listen to the track to keep it. The fuller your set, the rarer new ones get.</p>
+        <div class="hgrid" id="hypeGrid"></div>
+        <div class="sechead"><h2>All stickers</h2></div>
         <div class="book full" id="bookFull"></div>
       </section>
     </main>
@@ -1189,7 +1206,7 @@ const GENRE_ITEM=[[/r&b|lo-?fi/i,'cassette'],[/pop/i,'lanterns'],[/afro|african|
   [/electro|dance|ambient|house|techno/i,'fireflies'],[/jazz|blues|soul|funk/i,'saxophone'],[/rock|metal|punk|alternative|indie/i,'sign'],
   [/latin|brazil|cumbia|reggaeton/i,'maracas'],[/country|bluegrass/i,'banjo']];
 /* pasture item art is reused on genre stickers: viewBox of each item in scene coordinates */
-const ITEM_VB={lanterns:'226 32 166 72',drum:'16 520 60 70',campfire:'300 498 72 80',boombox:'76 540 78 60',fireflies:'128 196 124 108',saxophone:'70 300 82 116',sign:'-6 428 96 98',maracas:'162 548 74 54',cassette:'226 552 68 46',banjo:'332 302 64 126'};
+const ITEM_VB={lanterns:'438 160 214 112',drum:'16 520 60 70',campfire:'300 498 72 80',boombox:'76 540 78 60',fireflies:'128 196 124 108',saxophone:'70 300 82 116',sign:'-6 428 96 98',maracas:'162 548 74 54',cassette:'226 552 68 46',banjo:'332 302 64 126'};
 function itemArt(k,x,y,w,h){
   const el=document.getElementById('item-'+k);if(!el)return '';
   const c=el.cloneNode(true);['id','hidden','class','tabindex','role','aria-label','data-key'].forEach(a=>c.removeAttribute(a));
@@ -1555,7 +1572,7 @@ function ensureToday(){
       sug=(await first(S.profile,n))||(await second(S.profile,n));
       if(!sug)throw new Error('none');
     }else{sug=Object.assign({id:'mock'+n},SUGG[n%SUGG.length]);}
-    S.days[k]={sug,listened:false,fb:null};
+    S.days[k]={sug,listened:false,fb:null};assignHype(k);
     if(typeof sug.id==='number'){S.taste.usedTracks.push(sug.id);if(sug.artistId)S.taste.usedArtists.push(sug.artistId);if(sug.type==='same_vibe'&&sug.genreId)S.taste.usedGenres.push(sug.genreId);}
     save();return S.days[k];
   })();
@@ -1601,10 +1618,10 @@ function showTrack(d){
   const s=d.sug;showState('track');
   $('#cover').innerHTML=coverHTML(s);
   $('#sTitle').textContent=s.title;$('#sArtist').textContent=s.artist;$('#sGenre').textContent=s.genre;
-  if(!peeling){$('#hype').innerHTML=hypeSVG(s);$('#hype').classList.remove('peel');}
+  if(!peeling){$('#hype').innerHTML=d.hype&&HI[d.hype]?hypeStk(d.hype):hypeSVG(s);$('#hype').classList.remove('peel');}
   $('#disc').classList.toggle('open',!!d.listened&&!peeling);
   $('#listenedTag').hidden=!d.listened;
-  $('#why').innerHTML=miniBadge(s);renderFbMark(false);
+  $('#why').innerHTML=miniBadge(s)+hypeChip(d);renderFbMark(false);
   $('#swipeHint').hidden=!!S.swiped;
   $('#whyLine').innerHTML=s.type==='hidden_gem'?esc(s.reason)+'.':`Matches your taste in <b>${esc(s.vibe)}</b>. ${esc(s.reason)}.`;
   if(s.seed)$('#chewed').textContent=`Chewed from ${s.seed}.`;
@@ -1682,9 +1699,11 @@ function complete(){
   const item=discover(d.sug);
   const sb=Math.min(CFG.XP_STREAK*S.streak,CFG.XP_STREAK_MAX),xp=CFG.XP_LISTEN+sb+(newGenre?CFG.XP_GENRE:0);
   const ev=gainXP(xp);const bonus=bonusRoll(k);if(bonus)ev.push(bonus);
+  const hy=claimHype(d);
   stampUnlocks();
   save();flyDrop();peelSticker();showTrack(d);renderHeader();
   toast('+1 milk. Udderly fresh! Sticker saved.');
+  if(hy)toast(`Hype sticker #${hy.n} collected: “${hy.pun}” (${hypeCount()}/${HYPE.length})`);
   if(item)toast(`New in your pasture: ${ITEM_NAMES[item].toLowerCase()} (${d.sug.genre}).`);
   setTimeout(()=>celebrate(ev,xp,`listen 100${sb?` · streak ${sb}`:''}${newGenre?' · new genre 50':''}`),RM.matches?0:1500);
 }
@@ -2201,7 +2220,8 @@ function ensureProg(){ // fields for this version (also used by migration)
   if(!S.lootSeed)S.lootSeed=newLootSeed();
   if(S.level==null)S.level=1;if(S.xp==null)S.xp=0;if(!S.maxLevelEver)S.maxLevelEver=S.level;
   if(S.prestige==null)S.prestige=0;if(S.rollIndex==null)S.rollIndex=0;
-  if(!S.pity)S.pity={rare:0,leg:0};if(!S.owned)S.owned={};if(!S.slots)S.slots={};
+  if(!S.pity)S.pity={rare:0,leg:0};
+  if(!S.hype)S.hype={owned:{},pending:null,dry:0,rolls:0};if(!S.owned)S.owned={};if(!S.slots)S.slots={};
 }
 /* old saves: past listens become XP, the cow keeps her size, past level-ups are granted */
 (function migrate(){
@@ -2617,6 +2637,185 @@ $('#dbgSim').addEventListener('click',()=>{
   dbgOut('100 rolls from here (not saved)\n'+RARITIES.map(t=>`${t.name.padEnd(10)} ${String(c[t.k]||0).padStart(3)}  (${t.w}%)`).join('\n')+
     `\nnew ${kinds.item} · gold ${kinds.gold} · milk ${kinds.milk}\nlongest run without Rare+: ${maxGap} (pity at 10)\nlegendary at roll ${legAt.join(', ')||'none'}`);});
 
+/* ======================= HYPE STICKERS: 50 collectibles that can come with the daily track ======================= */
+/* chance a new day carries a collectible: MAX with an empty book, falling to MIN near 50/50.
+   pity: after (PITY_BASE + owned/PITY_STEP) days without one, the next day always has one. */
+const HCFG={MAX:.5,MIN:.06,CURVE:1.6,PITY_BASE:4,PITY_STEP:5};
+/* [id, pun, shape, fill, motif]  fill 'holo' = rainbow foil, 'ink' = night sticker */
+const HYPE=[
+ ['moosic','Moo-sic to my ears','circle','#FF8FAB','cow'],
+ ['udderlyfresh','Udderly fresh','scallop','#94D3F2','daisies'],
+ ['legendairy','Legen-dairy','star','holo','udderttrophy'],
+ ['holycow','Holy cow, what a tune','cloud','#FBFAF6','cowcloud'],
+ ['moovehooves','Moo-ve your hooves','burst','#C9B8F0','discoball'],
+ ['dairyvibes','Dairy good vibes','pill','#FBFAF6','pinwheel'],
+ ['creamcrop','Cream of the crop','shield','#FFD54A','haystack'],
+ ['moonata','Moonlight moo-nata','circle','ink','vinylmoon'],
+ ['chewonthis','Chew on this one','oval','#6FCB7F','clover'],
+ ['haynice','Hay, nice song!','ticket','#FFD54A','recordplayer'],
+ ['milkingit','Milking it','drop','#FBFAF6','milkcan'],
+ ['herdit','Herd it here first','hex','#94D3F2','micstand'],
+ ['mooodboost','Moo-d booster','burst','#FFD54A','sunflower'],
+ ['cowabunga','Cowabunga!','scallop','#94D3F2','duck'],
+ ['barnwild','Barn to be wild','rect','#FFB38A','tourvan'],
+ ['uddermadness','Udder madness','spot','holo','fireworks'],
+ ['gotbeats','Got milk? Got beats.','rect','#FF8FAB','ampstack'],
+ ['morecowbell','More cowbell!','circle','#FFD54A','p1arch'],
+ ['bellball','Bell of the ball','drop','#C9B8F0','windchime'],
+ ['mootiful','Moo-tiful','heart','#FF8FAB','gramoflower'],
+ ['calfway','Calf-way to heaven','cloud','#94D3F2','balloon'],
+ ['bachbarn','Bach to the barn','ticket','#FBFAF6','grandpiano'],
+ ['moozart','Moozart approved','shield','#C9B8F0','cello'],
+ ['heavymootal','Heavy moo-tal','star','ink','p8monolith'],
+ ['hiphophay','Hip-hop & hay','pill','#FFD54A','cassettetower'],
+ ['rollhay','Rock & roll in the hay','burst','#FFB38A','recordcrate'],
+ ['moowave','Moo wave','hex','holo','crystalsynth'],
+ ['grazeroof','Graze the roof','rect','#6FCB7F','gazebo'],
+ ['stampede','Stampede to replay','ticket','#FF8FAB','bicycle'],
+ ['nobull','No bull, a banger','oval','#FFB38A','xylophone'],
+ ['wheygood','Whey too good','scallop','#FFD54A','lemonade'],
+ ['butterbelieve','Butter believe it','drop','#FFD54A','beehive'],
+ ['cheeselouise','Cheese Louise!','spot','#FFD54A','mushrooms'],
+ ['moovelous','Moo-velous','cloud','holo','rainbow'],
+ ['absomootely','Abso-moo-tely','star','#94D3F2','starlightstage'],
+ ['spoton','Spot on','spot','#FBFAF6','ladybugs'],
+ ['mooverchaker','Moo-ver & shaker','circle','#6FCB7F','tambourine'],
+ ['milkyway','Milky Way groove','circle','ink','constellation'],
+ ['moonwalk','Moonwalk to the barn','hex','ink','cosmicturntable'],
+ ['cudyounot','Cud you not?','heart','#6FCB7F','frog'],
+ ['smoothbutter','Smooth as butter','pill','#94D3F2','hammock'],
+ ['outtopasture','Grazing in the groove','rect','#94D3F2','picnic'],
+ ['hoofit','Hoof it!','shield','#6FCB7F','windmill'],
+ ['freshhay','Fresh off the hay','scallop','#FFB38A','scarecrow'],
+ ['grassfed','Grass-fed bangers','burst','#6FCB7F','crickets'],
+ ['moosician','Moo-sician in the making','oval','#FF8FAB','ukulele'],
+ ['steerclear','Steer clear of silence','drop','#94D3F2','theremin'],
+ ['bovine','Bovine intervention','star','holo','hornflower'],
+ ['lactose','Lactose? Tolerant.','hex','#FBFAF6','p2fountain'],
+ ['holycud','Holy cud, a classic','shield','holo','moostatue']
+];
+const HI={};HYPE.forEach((h,i)=>{HI[h[0]]={id:h[0],n:i+1,pun:h[1],shape:h[2],fill:h[3],motif:h[4]};});
+const hypeCount=()=>Object.keys(S.hype.owned).length;
+let hOrd=null;
+function hypeOrder(){ // which one comes next is seeded per user, like the pasture items
+  if(hOrd&&hOrd.k===S.lootSeed)return hOrd.a;
+  const r=lrng(S.lootSeed,'hypeorder'),a=HYPE.map(h=>h[0]);
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  hOrd={k:S.lootSeed,a};return a;
+}
+const hypeChance=own=>HCFG.MIN+(HCFG.MAX-HCFG.MIN)*Math.pow((HYPE.length-own)/HYPE.length,HCFG.CURVE);
+const hypePity=own=>HCFG.PITY_BASE+Math.floor(own/HCFG.PITY_STEP);
+function hypeRoll(H,owned,rnd){
+  const own=Object.keys(owned).length;if(own>=HYPE.length)return false;
+  if(H.dry+1>=hypePity(own)||rnd<hypeChance(own)){H.dry=0;return true;}
+  H.dry++;return false;
+}
+/* decided when the day's track is picked, so the sealed record already wears it. A collectible you
+   didn't get to listen to is never lost: it comes back on the next day. */
+function assignHype(k){
+  const d=S.days[k],H=S.hype;if(!d||d.hype!==undefined)return;
+  if(H.pending&&!H.owned[H.pending]){d.hype=H.pending;return;}
+  const r=lrng(S.lootSeed,'hype',H.rolls)();H.rolls++;
+  if(hypeRoll(H,H.owned,r)){const id=hypeOrder().find(i=>!H.owned[i]);H.pending=id;d.hype=id;}else d.hype=null;
+}
+function claimHype(d){
+  const id=d&&d.hype,H=S.hype;if(!id||H.owned[id])return null;
+  H.owned[id]=Date.now();if(H.pending===id)H.pending=null;S.newSticker='h'+id;return HI[id];
+}
+
+/* ---------- drawing ---------- */
+const hTxt=(x,y,size,t,col,w=900,ls='-.02em')=>`<text x="${x}" y="${(+y).toFixed(1)}" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="${w}" font-size="${size.toFixed(1)}" fill="${col}" style="letter-spacing:${ls}">${esc(t)}</text>`;
+function hBlock(text,cx,cy,maxW,maxSize,col,maxChars=11){
+  const lines=fitLines(text.toUpperCase(),maxChars,3),longest=Math.max(...lines.map(l=>l.length),3);
+  const size=Math.min(maxSize,maxW/(.64*longest)),lh=size*.96,y0=cy-(lines.length-1)*lh/2+size*.34;
+  return lines.map((l,k)=>hTxt(cx,y0+k*lh,size,l,col)).join('');
+}
+function ringT(r,text,size,col){
+  const id='hr'+(++sid);
+  return `<defs><path id="${id}" d="M100,100 m-${r},0 a${r},${r} 0 1,1 ${2*r},0 a${r},${r} 0 1,1 -${2*r},0"/></defs><text font-family="Figtree,sans-serif" font-weight="800" font-size="${size}" fill="${col}"><textPath href="#${id}" textLength="${(2*Math.PI*r-size*.6).toFixed(1)}" lengthAdjust="spacing">${esc(text)}</textPath></text>`;
+}
+let COWG=null;
+function motif(m,x,y,w,h){
+  if(m==='cow'){COWG=COWG||(document.querySelector('.nw-ic svg g')||{outerHTML:''}).outerHTML;return `<svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="2 2 36 36" overflow="visible">${COWG}</svg>`;}
+  const b=measure()[m];if(!b)return '';const s=Math.max(b.w,b.h)+6;
+  return `<svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="${(b.x+b.w/2-s/2).toFixed(1)} ${(b.y+b.h/2-s/2).toFixed(1)} ${s.toFixed(1)} ${s.toFixed(1)}" overflow="visible"><g stroke="#1F1A17" stroke-linejoin="round" stroke-linecap="round" stroke-width="3">${NI[m].svg}</g></svg>`;
+}
+const HDIM={circle:[200,200],scallop:[200,200],burst:[200,200],hex:[200,200],spot:[200,200],heart:[200,200],drop:[200,200],shield:[200,200],star:[200,200],oval:[220,150],cloud:[220,150],rect:[230,120],ticket:[230,120],pill:[230,110]};
+const HLAY={circle:'ring',scallop:'ring',burst:'ring',hex:'ring',spot:'ring',heart:'stack',drop:'stack',shield:'stack',star:'star',oval:'side',cloud:'side',rect:'band',ticket:'band',pill:'band'};
+function hShape(k,w,h){
+  const f=n=>n.toFixed(1);
+  if(k==='scallop'){const n=14,R=90,r=R*Math.sin(Math.PI/n)*1.12;let d='';for(let i=0;i<=n;i++){const a=i/n*Math.PI*2-Math.PI/2,x=100+Math.cos(a)*R,y=100+Math.sin(a)*R;d+=i?` A${f(r)},${f(r)} 0 0 1 ${f(x)},${f(y)}`:`M${f(x)},${f(y)}`;}return d+'Z';}
+  if(k==='hex')return 'M'+[0,1,2,3,4,5].map(i=>{const a=i/6*Math.PI*2-Math.PI/2;return f(100+Math.cos(a)*100)+','+f(100+Math.sin(a)*100);}).join(' L')+'Z';
+  if(k==='star'){const p=[];for(let i=0;i<10;i++){const a=i/10*Math.PI*2-Math.PI/2,rr=i%2?62:100;p.push(f(100+Math.cos(a)*rr)+','+f(106+Math.sin(a)*rr));}return 'M'+p.join(' L')+'Z';}
+  if(k==='spot')return blob(100,100,92,9,rng(4242),.09);
+  if(k==='heart')return 'M100,186 C40,142 8,106 12,66 C16,30 46,14 72,18 C88,20 96,30 100,42 C104,30 112,20 128,18 C154,14 184,30 188,66 C192,106 160,142 100,186Z';
+  if(k==='drop')return 'M100,4 C100,4 34,92 34,132 A66,66 0 0 0 166,132 C166,92 100,4 100,4Z';
+  if(k==='shield')return 'M100,4 L184,28 Q188,112 158,152 Q134,182 100,196 Q66,182 42,152 Q12,112 16,28 Z';
+  if(k==='cloud')return 'M34,140 Q4,140 6,110 Q8,84 36,84 Q32,48 68,42 Q82,10 116,18 Q146,4 164,34 Q198,30 204,66 Q222,80 214,108 Q218,140 186,140 Z';
+  if(k==='ticket')return `M14,0 H${w-14} Q${w},0 ${w},14 V${h/2-14} A14,14 0 0 0 ${w},${h/2+14} V${h-14} Q${w},${h} ${w-14},${h} H14 Q0,${h} 0,${h-14} V${h/2+14} A14,14 0 0 0 0,${h/2-14} V14 Q0,0 14,0Z`;
+  if(k==='pill'){const r=h/2;return `M${r},0 H${w-r} A${r},${r} 0 0 1 ${w-r},${h} H${r} A${r},${r} 0 0 1 ${r},0Z`;}
+  return stShape(k,w,h);
+}
+function hSticker(p,fill,inner,w,h){
+  const id='hs'+(++sid),cut=9,pd=cut+3;
+  return `<svg viewBox="${-pd} ${-pd} ${w+2*pd} ${h+2*pd}" aria-hidden="true"><defs><clipPath id="${id}c"><path d="${p}"/></clipPath><linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".33" stop-color="#fff" stop-opacity="0"/><stop offset=".85" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".18"/></linearGradient></defs>
+  <path d="${p}" fill="#fff" stroke="rgba(23,20,15,.16)" stroke-width="${cut*2+2}" stroke-linejoin="round"/><path d="${p}" fill="#fff" stroke="#fff" stroke-width="${cut*2}" stroke-linejoin="round"/>
+  <path d="${p}" fill="${fill}"/><g clip-path="url(#${id}c)">${inner}</g><path d="${p}" fill="none" stroke="${INK}" stroke-width="3.2" stroke-linejoin="round"/><path d="${p}" fill="url(#${id}g)"/></svg>`;
+}
+/* one collectible hype sticker; sil = the dark "???" silhouette shown for ones you don't have yet */
+function hypeStk(id,sil){
+  const h=HI[id];if(!h)return '';const [w,hh]=HDIM[h.shape],lay=HLAY[h.shape];
+  const dark=h.fill==='ink',holo=h.fill==='holo',col=dark?'#FBFAF6':INK;
+  const fill=sil?'#3B342C':dark?'#17140F':holo?'#FFE38A':h.fill,num='#'+h.n;
+  let bg='',inner='';
+  if(holo&&!sil){const g='hg'+(++sid);
+    bg=`<defs><linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFB3C7"/><stop offset=".28" stop-color="#FFE38A"/><stop offset=".52" stop-color="#B8F0C8"/><stop offset=".76" stop-color="#A8DDF8"/><stop offset="1" stop-color="#D9C6FF"/></linearGradient></defs><rect x="-20" y="-20" width="${w+40}" height="${hh+40}" fill="url(#${g})"/>`+
+      [[.16,.2],[.86,.3],[.76,.86],[.2,.76]].map(([a,b])=>{const x=a*w,y=b*hh;return `<path d="M${x},${y-8} Q${x},${y} ${x+8},${y} Q${x},${y} ${x},${y+8} Q${x},${y} ${x-8},${y} Q${x},${y} ${x},${y-8}Z" fill="#FFFFFF" opacity=".9"/>`;}).join('');}
+  const M=(x,y,s)=>sil?`<g class="silm">${motif(h.motif,x,y,s,s)}</g>`:(dark?`<circle cx="${x+s/2}" cy="${y+s/2}" r="${s/2+3}" fill="#FBFAF6"/>`:'')+motif(h.motif,x,y,s,s);
+  const numT=(x,y,s)=>hTxt(x,y,s,num,sil?'#B9B2A5':col,800,'.04em');
+  if(lay==='ring'){
+    const r=h.shape==='spot'?72:h.shape==='hex'?74:78;
+    if(!sil){const t=h.pun.toUpperCase()+' · ',rep=Math.max(1,Math.round(62/t.length));inner+=ringT(r,t.repeat(rep),11.5,col)+`<circle cx="100" cy="100" r="${r-13}" fill="none" stroke="${col}" stroke-width="1.6"/>`;}
+    inner+=M(58,48,84)+numT(100,156,13);
+  }else if(lay==='stack'){
+    const L={heart:[66,36,68,124,110,19,158],drop:[68,64,64,150,100,18,182],shield:[60,22,80,130,124,20,166]}[h.shape];
+    inner=M(L[0],L[1],L[2])+(sil?'':hBlock(h.pun,100,L[3],L[4],L[5],col))+numT(100,L[6],12);
+  }else if(lay==='star'){
+    inner=M(68,98,64);
+    if(sil)inner+=numT(100,82,13);
+    else{const t=h.pun.toUpperCase(),sz=Math.min(15,128/(.6*t.length));
+      inner+=`<rect x="-10" y="62" width="220" height="28" fill="${dark?'#FBFAF6':INK}"/>`+hTxt(100,76+sz*.36,sz,t,dark?INK:'#FBFAF6',900,'.02em');}
+  }else if(lay==='side'){
+    inner=M(20,44,76)+(sil?'':hBlock(h.pun,152,84,104,19,col,10))+numT(152,h.shape==='cloud'?128:124,12);
+  }else{
+    inner=`<rect x="-10" y="-10" width="${w+20}" height="40" fill="${sil?'#2A251F':dark?'#FBFAF6':INK}"/>`+
+      hTxt(w/2,19.5,12.5,sil?num:'HYPE STICKER · '+num,sil?'#B9B2A5':dark?INK:'#FBFAF6',800,'.06em')+M(14,38,68)+
+      (sil?'':hBlock(h.pun,(w+82)/2,(hh+30)/2,w-104,21,col,11));
+  }
+  return hSticker(hShape(h.shape,w,hh),fill,bg+inner,w,hh);
+}
+function hypeChip(d){if(!d||!d.hype||!HI[d.hype])return '';const h=HI[d.hype];
+  return `<span class="hchip">${d.listened?'Collected':'Collectible'} #${h.n}</span>`;}
+function renderHypeGrid(){
+  $('#hypeCount2').textContent=`${hypeCount()}/${HYPE.length}`;
+  $('#hypeGrid').innerHTML=HYPE.map(([id])=>{const h=HI[id],own=!!S.hype.owned[id];
+    return `<div class="htile${own?' own':''}${S.newSticker==='h'+id?' new':''}"><span class="hth">${hypeStk(id,!own)}</span><span class="htn">${own?esc(h.pun):`#${h.n} ???`}</span></div>`;}).join('');
+}
+/* demo tools */
+$('#dbgHype').addEventListener('click',()=>{
+  const id=hypeOrder().find(i=>!S.hype.owned[i]);if(!id){dbgOut('All 50 hype stickers collected.');return;}
+  S.hype.owned[id]=Date.now();if(S.hype.pending===id)S.hype.pending=null;S.hype.dry=0;stampUnlocks();save();
+  dbgOut(`Granted #${HI[id].n} “${HI[id].pun}” (${hypeCount()}/${HYPE.length}).`);if(tab==='stats')renderStats();
+});
+$('#dbgHypeSim').addEventListener('click',()=>{
+  const marks=[10,25,40,48,50],tot={},R=300;
+  for(let run=0;run<R;run++){const r=lrng(S.lootSeed,'hsim',run),H={dry:0},owned={};let day=0,n=0;
+    while(n<HYPE.length&&day<5000){day++;if(hypeRoll(H,owned,r())){owned['x'+n]=1;n++;if(marks.includes(n))tot[n]=(tot[n]||0)+day;}}}
+  const own=hypeCount();
+  dbgOut(`Daily listens to reach (avg of ${R} runs)\n`+marks.map(m=>`${String(m).padStart(2)}/50  ~${Math.round(tot[m]/R)} days`).join('\n')+
+    `\nYou: ${own}/50 · chance now ${Math.round(hypeChance(own)*100)}% · pity after ${hypePity(own)-1} days without (${S.hype.dry} so far)`);
+});
+
 /* ---------- sticker book ---------- */
 const STREAKS=[3,7,14,30,60,100];
 function trackSticker(s){
@@ -2643,6 +2842,7 @@ function bookItems(){
   STREAKS.filter(n=>best>=n).forEach(n=>items.push({k:'s'+n,svg:()=>streakSticker(n)}));
   STAGES.filter(l=>l.n>1&&stage().n>=l.n).forEach(l=>items.push({k:'l'+l.n,svg:()=>levelSticker({n:l.min,name:l.name})}));
   S.discovered.forEach((d,i)=>items.push({k:'g'+d.key,svg:()=>genreSticker(d,['#FBFAF6','#FFD54A','#6FCB7F','#94D3F2'][i%4])}));
+  Object.keys((S.hype&&S.hype.owned)||{}).forEach(id=>items.push({k:'h'+id,svg:()=>hypeStk(id)}));
   Object.keys(S.days).sort().reverse().filter(k=>S.days[k].listened).forEach(k=>items.push({k:'t'+k,svg:()=>trackSticker(S.days[k].sug)}));
   const unl=S.unl||{};
   return items.map((it,i)=>Object.assign(it,{at:unl[it.k]||0,i})).sort((a,b)=>(b.at-a.at)||(a.i-b.i));
@@ -2650,14 +2850,15 @@ function bookItems(){
 function stampUnlocks(){S.unl=S.unl||{};const now=Date.now();bookItems().forEach(it=>{if(!S.unl[it.k])S.unl[it.k]=now;});}
 function bookEmpties(){
   const best=Math.max(S.best||0,S.streak||0),e=[];const ns=STREAKS.find(n=>best<n);if(ns)e.push(`${ns}-day<br>streak`);
-  const nl=STAGES.find(l=>stage().n<l.n);if(nl)e.push(`Lv ${nl.min}<br>${nl.name}`);e.push('New<br>genre');return e;
+  const nl=STAGES.find(l=>stage().n<l.n);if(nl)e.push(`Lv ${nl.min}<br>${nl.name}`);e.push('New<br>genre');if(hypeCount()<HYPE.length)e.push('Hype<br>sticker');return e;
 }
 const stkHTML=it=>`<div class="stk${it.k===S.newSticker&&tab==='stats'?' new':''}" style="transform:rotate(${(hash(it.k)%15)-7}deg)">${it.svg()}</div>`;
 function renderBook(){
   const items=bookItems(),emp=bookEmpties(),prev=items.slice(0,6);
-  const cnt=`${items.length} collected`;$('#bookCount').textContent=cnt;$('#bookCount2').textContent=cnt;
+  const cnt=`${items.length} collected`;$('#bookCount').textContent=`${cnt} · ${hypeCount()}/${HYPE.length} hype`;$('#bookCount2').textContent=cnt;
   $('#book').innerHTML=prev.map(stkHTML).join('')+emp.slice(0,Math.max(0,6-prev.length)).map(e=>`<div class="slot-empty">${e}</div>`).join('');
-  $('#bookAll').hidden=items.length<=6;$('#bookAll').textContent=`See all ${items.length} stickers`;
+  $('#bookAll').hidden=false;$('#bookAll').textContent=`See all stickers · ${hypeCount()}/${HYPE.length} hype`;
+  if(!$('#bookPage').hidden)renderHypeGrid();
   if(!$('#bookPage').hidden)$('#bookFull').innerHTML=items.map(stkHTML).join('')+emp.map(e=>`<div class="slot-empty">${e}</div>`).join('');
   if(S.newSticker&&tab==='stats'){S.newSticker=null;save();}
 }
