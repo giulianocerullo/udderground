@@ -239,7 +239,7 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 /* pasture (scene untouched) */
 #pasture{overflow:hidden}
 .field{position:absolute;inset:0;background:linear-gradient(to bottom,var(--scene-sky) 0 70%,var(--scene-meadow) 70%)}
-.fscroll{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x;cursor:grab}
+.fscroll{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior:none;touch-action:pan-x;cursor:grab}
 .strip{contain:layout paint}
 .field svg.scene{will-change:transform;transform:translateZ(0)}
 /* during a scroll, pause every animation in the meadow so the phone only has to slide a picture */
@@ -301,7 +301,8 @@ h1,h2,h3{font-family:var(--body);font-weight:800;letter-spacing:-.02em;margin:0;
 /* tab bar */
 .tabbar{display:grid;grid-template-columns:repeat(3,1fr);border-top:2.5px solid var(--ink);background:var(--white);padding:8px max(8px,env(safe-area-inset-right,0px)) 6px max(8px,env(safe-area-inset-left,0px));gap:4px;position:relative;z-index:10}
 .tab{border:0;background:transparent;font:700 11px/1.1 var(--body);white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 0 2px;cursor:pointer;position:relative;color:var(--mute)}
-.tab .p{width:56px;height:32px;border-radius:99px;display:grid;place-items:center;border:2px solid transparent;transition:background .15s}
+.tab .p{width:56px;height:32px;border-radius:99px;display:grid;place-items:center;border:2px solid transparent}
+.tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .tab .p svg{width:22px;height:22px}
 .tab[aria-selected="true"]{color:var(--ink)}
 .tab[aria-selected="true"] .p{background:var(--pink);border-color:var(--ink)}
@@ -1581,9 +1582,15 @@ function ensureToday(){
 }
 
 /* ---------- tabs ---------- */
+let tabSeq=0;
 function setTab(t){
-  tab=t;
+  tab=t;const seq=++tabSeq;
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t?'true':'false'));
+  hideTip();
+  // let the tab bar paint first; the screen itself is drawn right after
+  requestAnimationFrame(()=>setTimeout(()=>{if(seq===tabSeq)showTabContent(t);},0));
+}
+function showTabContent(t){
   ['today','pasture','stats'].forEach(id=>{$('#'+id).hidden=id!==t;});
   if(t==='pasture'){$('#tabDot').hidden=true;const fresh=renderPasture();layoutField();if(fresh&&fresh.length)setTimeout(()=>scrollToItem(fresh[0]),350);}
   $('#bookPage').hidden=true;$('#logPage').hidden=true;$('#colPage').hidden=true;
@@ -1893,6 +1900,12 @@ function layoutField(){
   fScale=Math.min(fw/390,fh/600);
   const W=worldW(),sv=$('#scene');sv.style.width=(W*fScale)+'px';sv.style.height=(600*fScale)+'px';$('#strip').style.width=Math.max(fw,W*fScale)+'px';
   fsc.scrollLeft=off*fScale;fReady=true;
+  // behind the scene: sky, back hill and meadow at the scene's own edge heights, so an edge never looks cut
+  const top=fh-600*fScale,ink='#1F1A17';
+  const band=(h1,h2)=>{const a=(top+h1*fScale).toFixed(1),b=(top+h2*fScale).toFixed(1),t=Math.max(1.5,2*fScale).toFixed(1);
+    return `linear-gradient(to bottom,#A8D8F0 0 calc(${a}px - ${t}px),${ink} calc(${a}px - ${t}px) calc(${a}px + ${t}px),#6FAE52 calc(${a}px + ${t}px) calc(${b}px - ${t}px),${ink} calc(${b}px - ${t}px) calc(${b}px + ${t}px),#9BD17A calc(${b}px + ${t}px))`;};
+  const R=W>780?[330,376]:[350,382];
+  $('#field').style.background=`${band(350,382)} left top/50.5% 100% no-repeat,${band(R[0],R[1])} right top/50.5% 100% no-repeat`;
 }
 function scrollToItem(k){
   const el=document.getElementById('item-'+k);if(!el||!fReady)return;
@@ -2470,6 +2483,7 @@ function positionGenre(k){
 })();
 function applyWorld(){
   const W=worldW();scene.setAttribute('viewBox',`0 0 ${W} 600`);
+  const on=areasOpen()>0;['extSky','extBack','extFront'].forEach(i=>{const el=$('#'+i);if(el)el.style.display=on?'':'none';});
 }
 
 /* ---------- top bar: level, thin XP bar, prestige emblem ---------- */
